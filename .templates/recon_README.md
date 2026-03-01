@@ -2,7 +2,7 @@
 
 Reconnaissance phase outputs. This folder is **mandatory** for every engagement.
 
-## Contents
+## Expected Contents
 
 | File | Description |
 |------|-------------|

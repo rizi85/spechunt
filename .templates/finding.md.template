@@ -1,0 +1,56 @@
+---
+id: {finding-id}
+title: {Finding Title}
+status: discovered
+severity: unknown
+cvss: null
+cvss_vector: null
+asset: {asset}
+endpoint: {affected endpoint or parameter}
+cwe: {CWE-XXX}
+discovered: {YYYY-MM-DD}
+submitted: null
+bounty: null
+---
+
+## Summary
+
+{One paragraph describing the vulnerability, how it was found, and why it matters.}
+
+## Current State
+
+**Status: Discovered** — {What needs to happen next.}
+
+## Attack Chain
+
+```
+{Step-by-step attack flow}
+```
+
+## Steps to Reproduce
+
+1. {Navigate to / Send request to — include exact URL}
+2. {Supply payload / Modify parameter — include exact value}
+3. {Observe response — expected vs actual}
+4. {Confirm impact — what you see that proves exploitation}
+
+## Impact
+
+{What an attacker can achieve with this vulnerability — written from a business risk perspective.}
+
+## Remediation
+
+{Specific, actionable fix. Not "validate input" — be concrete.}
+
+## References
+
+- [CWE-{XXX}: {Name}](https://cwe.mitre.org/data/definitions/XXX.html)
+- {OWASP / CVE / public writeup links}
+
+## Key Files
+
+| File | Purpose |
+|------|---------|
+| `evidences/` | {Screenshots, logs} |
+| `poc/` | {Exploit code} |
+| `writeup/submission.md` | {Platform submission draft} |

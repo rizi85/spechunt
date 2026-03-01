@@ -25,7 +25,3 @@ findings/{finding-name}/
 ```
 discovered → exploring → exploited → submitted → accepted/rejected/disputed
 ```
-
-## Current Findings
-
-| [xss-search-page](xss-search-page/finding.md) | discovered | Unknown |

@@ -1,0 +1,88 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code when working in this bug bounty engagement.
+
+## Project Overview
+
+Bug bounty research workspace for **{TARGET_NAME}** ({TARGET_URL}) on {PLATFORM}.
+{TARGET_DESCRIPTION}
+
+## Scope & Rules (Critical)
+
+- **Tier 1** (highest bounty): {TIER1_ASSETS}
+- **Tier 2**: {TIER2_ASSETS}
+- **Automated tooling:** {RATE_LIMIT}
+- Full rules: `program/rules.md`
+- Structured scope: `recon/scope.md`
+
+## Folder Structure
+
+```
+./
+├── CLAUDE.md                    # This file — agent instructions
+├── status.md                    # All findings at a glance
+├── program/                     # [mandatory] Raw program info from platform
+│   ├── program_description.md
+│   └── rules.md
+├── recon/                       # [mandatory] Reconnaissance outputs
+│   ├── scope.md                 # Structured scope (quick reference)
+│   ├── recon_notes.md           # Raw recon findings
+│   ├── triage.md                # Prioritized findings queue
+│   └── triage-report.md         # OSINT-enriched triage
+└── findings/                    # [mandatory] One folder per finding
+    └── {finding-name}/
+        ├── finding.md           # [mandatory] Metadata + summary + state
+        ├── evidences/           # Screenshots, logs, webhook data
+        ├── poc/                 # Exploit code, automation scripts
+        ├── writeup/             # Analysis, vuln reports, submissions
+        ├── comms/               # Triager/program communications
+        └── misc/                # Test scripts, scratch work
+```
+
+## Agent Workflow
+
+1. **Read `program/` first** — understand scope, rules, out-of-scope items
+2. **Read `recon/scope.md`** — quick reference for scope checks
+3. **Read `status.md`** — understand current engagement state
+4. **Read `recon/triage.md`** — know the priority order
+5. **For any finding, read `findings/{name}/finding.md` first** — current state and key files
+
+## Agent Skills
+
+| Skill | Usage | What it does |
+|-------|-------|--------------|
+| `/new-finding` | `/new-finding <finding-name>` | Scaffolds finding folder, fills finding.md, updates triage and status |
+| `/recon` | `/recon` | Structured passive recon — scope extraction, fingerprinting, triage population |
+| `/triage` | `/triage` | OSINT-enriched triage — enriches priority queue, writes triage-report.md |
+| `/submit` | `/submit <finding-name>` | Drafts complete platform submission report from finding data |
+| `/update-finding` | `/update-finding <finding-name> <status>` | Updates finding status, increments counters, git milestone commit |
+| `/scope-check` | `/scope-check <url-or-domain>` | Verifies in-scope / out-of-scope with tier and bounty range |
+
+## Known Constraints
+
+<!-- Replace examples below with constraints discovered during recon -->
+- **WAF/CDN:** {e.g., "Cloudflare — blocks payloads with `<script`, `UNION SELECT`, `../` patterns"}
+- **Rate Limits:** {e.g., "100 req/min per IP on /api/; 10 login attempts before lockout"}
+- **Auth:** {e.g., "JWT tokens expire after 15min; refresh via POST /auth/refresh with refresh_token cookie"}
+- **IP Restrictions:** {e.g., "/admin restricted to internal IPs only"}
+- **CSP:** {e.g., "script-src 'self' cdn.target.com — no unsafe-inline"}
+- **CORS:** {e.g., "Reflects Origin only for *.target.com subdomains"}
+
+## Useful Commands
+
+```bash
+# Authenticate and capture session token
+curl -s -X POST https://{TARGET}/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"user@example.com","password":"password"}' | jq '.token'
+
+# Authenticated request template
+curl -s https://{TARGET}/api/endpoint \
+  -H "Authorization: Bearer TOKEN_HERE" \
+  -H "Content-Type: application/json"
+
+# Check response headers
+curl -sI https://{TARGET} | grep -iE 'server|x-powered-by|content-security|set-cookie|x-frame'
+
+# {Add target-specific commands as discovered}
+```

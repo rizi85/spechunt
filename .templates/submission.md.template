@@ -1,0 +1,80 @@
+# Submission — {Finding Title}
+
+> **Draft** — Review before posting to the platform. Remove this line when ready.
+
+---
+
+## Title
+
+`[{VulnType}] {endpoint} — {one-line impact}`
+
+## Severity
+
+**{Severity}** — CVSS {cvss_score} `{cvss_vector}`
+
+## Summary
+
+{One paragraph: what the vulnerability is, where it lives, and what an attacker can do with it. Write for a triager who has no prior context.}
+
+## Affected Asset
+
+- **Domain / Endpoint:** `{endpoint}`
+- **Asset Tier:** {tier}
+- **CWE:** [{CWE-XXX}](https://cwe.mitre.org/data/definitions/XXX.html)
+
+## Steps to Reproduce
+
+> Environment: {browser/tool used, account type, any setup needed}
+
+1. {First step — include exact URL}
+2. {Second step — include exact request/payload}
+3. {Third step — expected vs actual behavior}
+4. Observe: {what the attacker sees that proves exploitation}
+
+**Request:**
+```http
+{METHOD} {path} HTTP/1.1
+Host: {host}
+{headers}
+
+{body}
+```
+
+**Response:**
+```http
+HTTP/1.1 {status}
+{relevant response headers}
+
+{relevant response body}
+```
+
+## Proof of Concept
+
+{Brief description of the PoC.}
+
+![Evidence screenshot](../evidences/{evidence_filename})
+
+See also: `../poc/{poc_filename}`
+
+## Impact
+
+{Write from a business risk perspective. What can an attacker actually achieve?}
+
+- **Confidentiality:** {e.g., Can read arbitrary user data / No impact}
+- **Integrity:** {e.g., Can modify records / No impact}
+- **Availability:** {e.g., Can disrupt service / No impact}
+- **Scope:** {Single account / All users / Infrastructure}
+
+## Remediation
+
+{Specific, actionable fix — not generic advice.}
+
+```
+{code example of the fix, if applicable}
+```
+
+## References
+
+- [CWE-{XXX}: {Name}](https://cwe.mitre.org/data/definitions/XXX.html)
+- [OWASP: {Relevant Category}](https://owasp.org/...)
+- {Any relevant CVEs or public writeups}

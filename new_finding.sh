@@ -35,6 +35,15 @@ if [ $# -lt 1 ] || [ -z "$1" ]; then
 fi
 
 FINDING_NAME="$1"
+
+# Validate slug format: lowercase letters, digits, hyphens only
+if ! echo "$FINDING_NAME" | grep -qE '^[a-z0-9][a-z0-9-]*$'; then
+    echo "[!] Invalid finding name: '${FINDING_NAME}'"
+    echo "    Use lowercase letters, digits, and hyphens only."
+    echo "    Examples: sql-injection, xss-search-page, ssrf-webhook"
+    exit 1
+fi
+
 FINDING_DIR="${SCRIPT_DIR}/findings/${FINDING_NAME}"
 
 if [ ! -d "${SCRIPT_DIR}/findings" ]; then
@@ -72,11 +81,13 @@ echo "    [+] misc/"
 cat > "${FINDING_DIR}/finding.md" << EOF
 ---
 id: ${FINDING_NAME}
-title: TODO — Describe the vulnerability
+title: TODO — Describe the vulnerability in one line
 status: discovered
 severity: unknown
 cvss: null
+cvss_vector: null
 asset: TODO
+endpoint: TODO
 cwe: TODO
 discovered: $(date +%Y-%m-%d)
 submitted: null
@@ -85,11 +96,11 @@ bounty: null
 
 ## Summary
 
-TODO: One paragraph describing the vulnerability, how it was found, and why it matters.
+TODO: One paragraph — what the vulnerability is, how it was found, and why it matters.
 
 ## Current State
 
-**Status: Discovered** — TODO: What needs to happen next.
+**Status: Discovered** — TODO: What needs to happen next to advance this finding.
 
 ## Attack Chain
 
@@ -97,15 +108,32 @@ TODO: One paragraph describing the vulnerability, how it was found, and why it m
 TODO: Step-by-step attack flow
 \`\`\`
 
+## Steps to Reproduce
+
+1. TODO: First step (include exact URL)
+2. TODO: Second step (include exact payload/parameter)
+3. TODO: Third step (expected vs actual response)
+4. Observe: TODO
+
 ## Impact
 
-TODO: What an attacker can do with this vulnerability.
+TODO: What an attacker can achieve — written from a business risk perspective.
+
+## Remediation
+
+TODO: Specific, actionable fix.
+
+## References
+
+- TODO: CWE / OWASP / CVE links
 
 ## Key Files
 
 | File | Purpose |
 |------|---------|
-| | |
+| \`evidences/\` | Screenshots and logs |
+| \`poc/\` | Exploit code |
+| \`writeup/submission.md\` | Platform submission draft |
 EOF
 
 echo "    [+] finding.md"
@@ -117,11 +145,19 @@ cat > "${FINDING_DIR}/evidences/README.md" << 'EOF'
 
 Proof that the vulnerability exists. Screenshots, logs, webhook captures, exfiltrated data.
 
+## Naming Convention
+
+```
+YYYY-MM-DD_NN_description.ext
+```
+
+Examples: `2026-03-01_01_initial-request.txt`, `2026-03-01_02_response-with-data.png`
+
 ## Agent Instructions
 
-- Name screenshots descriptively: `ss_{phase}_{description}.png`
-- Save raw API/webhook responses as `.txt` or `.json`
-- Capture both attacker-side and target-side evidence
+- Follow the naming convention — submission.md references evidence files by name
+- Save raw HTTP requests/responses as `.txt` or `.json`; screenshots as `.png`
+- Capture both attacker-side request and target-side response as separate files
 - Do not modify evidence files after creation — they are timestamped proof
 EOF
 
@@ -143,11 +179,19 @@ cat > "${FINDING_DIR}/writeup/README.md" << 'EOF'
 
 Analysis documents, vulnerability reports, and platform submissions.
 
+## Contents
+
+| File | Purpose |
+|------|---------|
+| `submission.md` | **Primary** — Platform submission draft (auto-generated) |
+| `analysis.md` | Optional — Deep technical analysis, root cause investigation |
+
 ## Agent Instructions
 
-- The submission document is the canonical report — keep it updated
-- Include: summary, steps to reproduce, impact, affected code, remediation
-- Reference evidence files and PoC files by relative path
+- `submission.md` is the canonical report — use `/submit <finding-name>` to auto-fill it
+- Reference evidence files by relative path: `../evidences/YYYY-MM-DD_NN_description.png`
+- Steps to Reproduce must be literal and copy-paste ready
+- Do not submit to the platform directly — human review first
 EOF
 
 cat > "${FINDING_DIR}/comms/README.md" << 'EOF'
@@ -155,12 +199,20 @@ cat > "${FINDING_DIR}/comms/README.md" << 'EOF'
 
 All communications with the triager and program owner.
 
+## Naming Convention
+
+```
+YYYY-MM-DD_NN_description.md
+```
+
+Examples: `2026-03-01_01_submitted.md`, `2026-03-03_02_triager-request-info.md`
+
 ## Agent Instructions
 
-- Save each response/comment as a separate file with date context
-- Name files chronologically: `01_initial_response.md`, `02_impact_update.md`, etc.
-- Read all files chronologically to understand the full discussion thread
-- Always draft responses here before posting to the platform
+- One file per communication event (sent or received)
+- Read all files in alphabetical (chronological) order to follow the full thread
+- Always draft outgoing responses here before posting to the platform
+- Include received platform messages verbatim
 EOF
 
 cat > "${FINDING_DIR}/misc/README.md" << 'EOF'
@@ -175,6 +227,69 @@ Test scripts, scratch work, and anything that doesn't fit in other folders.
 EOF
 
 echo "    [+] README.md (x5 subfolders)"
+
+# --- Generate writeup/submission.md ---------------------------------------
+
+cat > "${FINDING_DIR}/writeup/submission.md" << EOF
+# Submission — TODO: Finding Title
+
+> **Draft** — Review before posting to the platform. Remove this line when ready.
+
+---
+
+## Title
+
+\`[VulnType] endpoint — one-line impact\`
+
+## Severity
+
+**TODO** — CVSS null \`null\`
+
+## Summary
+
+TODO: One paragraph — what the vulnerability is, where it lives, what an attacker can do.
+
+## Affected Asset
+
+- **Domain / Endpoint:** \`TODO\`
+- **Asset Tier:** TODO
+- **CWE:** [TODO](https://cwe.mitre.org/data/definitions/XXX.html)
+
+## Steps to Reproduce
+
+> Environment: TODO (browser/tool, account type, any setup)
+
+1. TODO — include exact URL
+2. TODO — include exact request/payload
+3. TODO — expected vs actual behavior
+4. Observe: TODO
+
+\`\`\`http
+TODO: Paste the key request/response here
+\`\`\`
+
+## Proof of Concept
+
+TODO: Brief description. See: \`../evidences/TODO_filename\`
+
+## Impact
+
+- **Confidentiality:** TODO
+- **Integrity:** TODO
+- **Availability:** TODO
+- **Scope:** TODO
+
+## Remediation
+
+TODO: Specific fix.
+
+## References
+
+- [CWE-TODO](https://cwe.mitre.org/data/definitions/XXX.html)
+- TODO: OWASP / CVE / writeup links
+EOF
+
+echo "    [+] writeup/submission.md"
 
 # --- Update findings/README.md if it has "None yet" -----------------------
 
@@ -208,14 +323,24 @@ if [ -f "$STATUS_FILE" ]; then
     echo "    [+] Updated status.md"
 fi
 
+# --- Git milestone commit -------------------------------------------------
+
+if git -C "$SCRIPT_DIR" rev-parse --git-dir > /dev/null 2>&1; then
+    git -C "$SCRIPT_DIR" add "${FINDING_DIR}" 2>/dev/null || true
+    [ -f "${FINDINGS_README}" ] && git -C "$SCRIPT_DIR" add "${FINDINGS_README}" 2>/dev/null || true
+    [ -f "${STATUS_FILE}" ] && git -C "$SCRIPT_DIR" add "${STATUS_FILE}" 2>/dev/null || true
+    git -C "$SCRIPT_DIR" commit -m "finding(${FINDING_NAME}): discovered" 2>/dev/null && \
+        echo "    [+] Git commit: finding(${FINDING_NAME}): discovered" || true
+fi
+
 # --- Done -----------------------------------------------------------------
 
 echo ""
 echo "[+] Finding created successfully!"
 echo ""
 echo "Next steps:"
-echo "  1. Edit findings/${FINDING_NAME}/finding.md — fill in title, summary, CWE"
+echo "  1. Edit findings/${FINDING_NAME}/finding.md — fill in title, severity, CWE, summary"
 echo "  2. Add PoC code to findings/${FINDING_NAME}/poc/"
 echo "  3. Take screenshots → findings/${FINDING_NAME}/evidences/"
-echo "  4. Write analysis → findings/${FINDING_NAME}/writeup/"
-echo "  5. Update status.md and finding.md as the finding progresses"
+echo "  4. Run /submit ${FINDING_NAME} to draft the platform submission"
+echo "  5. Run /update-finding ${FINDING_NAME} <status> as the finding progresses"

@@ -7,7 +7,7 @@ Agents should reference this file for quick scope checks during active testing.
 
 | Asset | Type | Tier | Bounty Range |
 |-------|------|------|--------------|
-| TODO | | | |
+| | | | |
 
 ## Bounty Table
 
@@ -21,24 +21,25 @@ Agents should reference this file for quick scope checks during active testing.
 
 ## Worst-Case Scenarios (Program Priorities)
 
-1. TODO
+1. {SCENARIO_1}
+2. {SCENARIO_2}
 
 ## Rate Limits
 
-- **Automated tooling:** TODO
+- **Automated tooling:** {RATE_LIMIT}
 
 ## Out of Scope
 
-TODO: List out-of-scope items from program rules.
+{OUT_OF_SCOPE_LIST}
 
 ## Tech Stack
 
-- **Backend:** TODO
-- **Frontend:** TODO
-- **Infrastructure:** TODO
+- **Backend:** {BACKEND}
+- **Frontend:** {FRONTEND}
+- **Infrastructure:** {INFRASTRUCTURE}
 
 ## Key URLs
 
 | URL | Purpose |
 |-----|---------|
-| TODO | |
+| | |

@@ -1,24 +1,23 @@
 # Engagement Status
 
-**Target:** TestCorp
-**Platform:** TODO
-**Started:** 2026-03-01
-**Last Updated:** 2026-03-01
+**Target:** {TARGET_NAME} ({TARGET_URL})
+**Platform:** {PLATFORM}
+**Started:** {START_DATE}
+**Last Updated:** {LAST_UPDATED}
 
 ## Findings Overview
 
 | Finding | Status | Severity | Asset | Bounty | Next Action |
 |---------|--------|----------|-------|--------|-------------|
-| [xss-search-page](findings/xss-search-page/finding.md) | accepted | Unknown | TODO | - | Initial investigation |
 | | | | | | |
 
 ## Engagement Summary
 
-- **Total findings discovered:** 1
-- **Submitted:** 1
-- **Accepted:** 1
+- **Total findings discovered:** 0
+- **Submitted:** 0
+- **Accepted:** 0
 - **Rejected/Disputed:** 0
-- **Bounty earned:** $500
+- **Bounty earned:** $0
 
 ## Blockers
 
