@@ -18,7 +18,7 @@ cd ../target-name        # navigate to the renamed directory
 # 3. Paste the full program description from the bounty platform
 #    into program/program_description.md
 
-# 4. Fill in two fields in CLAUDE.md: Target URL and Platform
+# 4. Fill in two fields in CLAUDE.md: Program URL and Platform
 
 # 5. Launch Claude Code
 claude
@@ -168,7 +168,7 @@ After `init.sh`, only **two fields** need to be filled in manually:
 
 | Field | What to fill in |
 |-------|-----------------|
-| **Target URL** | The primary domain or URL of the target |
+| **Program URL** | The bounty platform program page (e.g. `https://hackerone.com/target`) |
 | **Platform** | The bounty platform (HackerOne, Bugcrowd, Intigriti, etc.) |
 
 Everything else — scope tiers, bounty tables, out-of-scope lists, rate limits — is extracted automatically by `/setup` from the program description you paste into `program/program_description.md`.

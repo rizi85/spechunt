@@ -1,6 +1,7 @@
 # Engagement Status
 
-**Target:** {TARGET_NAME} ({TARGET_URL})
+**Target:** {TARGET_NAME}
+**Program URL:** {PROGRAM_URL}
 **Platform:** {PLATFORM}
 **Started:** {START_DATE}
 **Last Updated:** {LAST_UPDATED}

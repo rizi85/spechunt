@@ -91,7 +91,7 @@ CLAUDEEOF
 
 cat >> "${SCRIPT_DIR}/CLAUDE.md" << EOF
 Bug bounty research workspace for **${TARGET_NAME}**.
-- **Target URL:** TODO
+- **Program URL:** TODO
 - **Platform:** TODO
 - **Program description:** \`program/program_description.md\`
 EOF
@@ -548,7 +548,7 @@ echo "     cd \"${NEW_DIR}\""
 echo ""
 fi
 echo "  1. Paste program description into program/program_description.md"
-echo "  2. Update CLAUDE.md: fill in Target URL and Platform (2 fields only)"
+echo "  2. Update CLAUDE.md: fill in Program URL and Platform (2 fields only)"
 echo "  3. Launch Claude Code: claude"
 echo "  4. Run /setup — agent will extract scope, tiers, and rules automatically"
 echo "  5. Review program/scope.md and program/rules.md, then run /recon"
