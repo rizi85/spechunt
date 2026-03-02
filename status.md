@@ -9,11 +9,12 @@
 
 | Finding | Status | Severity | Asset | Bounty | Next Action |
 |---------|--------|----------|-------|--------|-------------|
+| [xss-search-page](findings/xss-search-page/finding.md) | discovered | Unknown | TODO | - | Initial investigation |
 | | | | | | |
 
 ## Engagement Summary
 
-- **Total findings discovered:** 0
+- **Total findings discovered:** 1
 - **Submitted:** 0
 - **Accepted:** 0
 - **Rejected/Disputed:** 0

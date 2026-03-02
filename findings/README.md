@@ -28,4 +28,4 @@ discovered → exploring → exploited → submitted → accepted/rejected/dispu
 
 ## Current Findings
 
-None yet.
+| [xss-search-page](xss-search-page/finding.md) | discovered | Unknown |
