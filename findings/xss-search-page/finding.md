@@ -1,7 +1,7 @@
 ---
 id: xss-search-page
 title: TODO — Describe the vulnerability in one line
-status: discovered
+status: submitted
 severity: unknown
 cvss: null
 cvss_vector: null
@@ -9,7 +9,7 @@ asset: TODO
 endpoint: TODO
 cwe: TODO
 discovered: 2026-03-02
-submitted: null
+submitted: 2026-03-02
 bounty: null
 ---
 
