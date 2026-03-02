@@ -14,20 +14,22 @@ cd target-name
 # 2. Initialize the engagement
 ./init.sh "Target Name"
 
-# 3. Fill in program info from the bounty platform
-#    - program/program_description.md  (paste full description)
-#    - program/rules.md                (paste rules of engagement)
+# 3. Paste the full program description from the bounty platform
+#    into program/program_description.md
 
-# 4. Update CLAUDE.md with target-specific details
-#    (see "Configuring CLAUDE.md" section below)
+# 4. Fill in two fields in CLAUDE.md: Target URL and Platform
 
-# 5. Launch Claude Code and begin recon
+# 5. Launch Claude Code
 claude
 
-# 6. Run /recon to kick off structured passive reconnaissance
-#    /recon
+# 6. Run /setup — the agent reads program_description.md and
+#    auto-populates recon/scope.md and program/rules.md with
+#    structured tiers, bounty tables, out-of-scope lists, etc.
+#    Review the output, correct anything, then continue.
 
-# 7. When the agent discovers a vulnerability:
+# 7. Run /recon to begin passive reconnaissance
+
+# 8. When the agent discovers a vulnerability:
 #    /new-finding <finding-name>
 ```
 
@@ -80,11 +82,12 @@ After running `./init.sh`, the directory looks like this:
 
 ## Agent Skills
 
-Spec Hunt includes six slash commands that agents invoke during a session. These live in `.claude/commands/` and are available automatically when Claude Code is launched in this directory.
+Spec Hunt includes seven slash commands that agents invoke during a session. These live in `.claude/commands/` and are available automatically when Claude Code is launched in this directory.
 
 | Skill | Usage | What it does |
 |-------|-------|--------------|
-| `/recon` | `/recon` | Structured passive recon — extracts scope into scope.md, fingerprints assets, maps API surface, populates recon_notes.md and triage.md |
+| `/setup` | `/setup` | Reads `program/program_description.md` and auto-populates `recon/scope.md` (tiers, bounty table, out-of-scope list, rate limits) and structures `program/rules.md`. Run once after pasting the program description. |
+| `/recon` | `/recon` | Structured passive recon — fingerprints assets, maps API surface, documents auth flows, populates recon_notes.md and triage.md |
 | `/triage` | `/triage` | OSINT-enriches each item in triage.md (CVEs, public exploits, complexity), writes triage-report.md, re-orders the priority queue |
 | `/new-finding` | `/new-finding <finding-name>` | Runs `new_finding.sh`, then auto-fills finding.md (title, severity, CWE, summary, attack chain, impact) and updates recon/triage.md |
 | `/submit` | `/submit <finding-name>` | Reads finding.md + evidences/ + poc/ and drafts a complete platform submission report at `writeup/submission.md` |
@@ -150,16 +153,16 @@ Each finding also gets a pre-filled `writeup/submission.md` scaffold covering ti
 
 ## Configuring CLAUDE.md
 
-After `init.sh` generates `CLAUDE.md`, fill in the TODO sections. This file is what the AI agent reads first — the more detail you provide, the better it performs.
+After `init.sh`, only **two fields** need to be filled in manually:
 
-| Section | What to fill in |
-|---------|-----------------|
-| **Project Overview** | Target URL, bounty platform, one-line description |
-| **Scope & Rules** | Tier 1 and Tier 2 assets, bounty ranges, rate limit for automated tooling |
-| **Known Constraints** | WAF/CDN behaviour, auth token lifetimes, IP restrictions, CSP policy, CORS config |
-| **Useful Commands** | Curl auth flows, API request templates, header inspection one-liners |
+| Field | What to fill in |
+|-------|-----------------|
+| **Target URL** | The primary domain or URL of the target |
+| **Platform** | The bounty platform (HackerOne, Bugcrowd, Intigriti, etc.) |
 
-The file ships with commented examples for each constraint and command type. Fill them in as you discover constraints during recon, and remove the examples that don't apply.
+Everything else — scope tiers, bounty tables, out-of-scope lists, rate limits — is extracted automatically by `/setup` from the program description you paste into `program/program_description.md`.
+
+The **Known Constraints** and **Useful Commands** sections are populated incrementally as the agent discovers constraints during recon and testing. They start empty (with commented examples for reference) and grow over the course of the engagement.
 
 ## Git History
 

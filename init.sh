@@ -78,18 +78,21 @@ CLAUDEEOF
 
 cat >> "${SCRIPT_DIR}/CLAUDE.md" << EOF
 Bug bounty research workspace for **${TARGET_NAME}**.
-Update this section with target URL, platform, and description.
+- **Target URL:** TODO
+- **Platform:** TODO
+- **Program description:** \`program/program_description.md\`
 EOF
 
 cat >> "${SCRIPT_DIR}/CLAUDE.md" << 'CLAUDEEOF'
 
-## Scope & Rules (Critical)
+## Scope & Rules
 
-- **Tier 1** (highest bounty): `TODO`
-- **Tier 2**: `TODO`
-- **Automated tooling:** TODO (check program rules for rate limits)
-- Full rules: `program/rules.md`
-- Structured scope: `recon/scope.md`
+Source of truth — always read these files before testing anything:
+- **Full rules:** `program/rules.md`
+- **Structured scope (tiers, bounty table, out-of-scope list):** `recon/scope.md`
+
+Run `/setup` after pasting the program description to auto-populate these files.
+When in doubt about whether a target is in scope, run `/scope-check <url>`.
 
 ## Folder Structure
 
@@ -117,51 +120,45 @@ cat >> "${SCRIPT_DIR}/CLAUDE.md" << 'CLAUDEEOF'
 
 ## Agent Workflow
 
-1. **Read `program/` first** — understand scope, rules, out-of-scope items
-2. **Read `recon/scope.md`** — quick reference for scope checks
-3. **Read `status.md`** — understand current engagement state
-4. **Read `recon/triage.md`** — know the priority order
-5. **For any finding, read `findings/{name}/finding.md` first** — current state and key files
+1. **Read `program/program_description.md`** — full program context
+2. **Read `recon/scope.md`** — structured scope, tiers, out-of-scope list
+3. **Read `status.md`** — current engagement state and findings
+4. **Read `recon/triage.md`** — priority order for testing
+5. **For any finding, read `findings/{name}/finding.md` first** — current state
 
 ## Agent Skills
 
 | Skill | Usage | What it does |
 |-------|-------|--------------|
-| `/new-finding` | `/new-finding <finding-name>` | Scaffolds finding folder, fills finding.md, updates triage and status |
-| `/recon` | `/recon` | Structured passive recon workflow — scope extraction, fingerprinting, triage population |
+| `/setup` | `/setup` | Parses program_description.md → populates recon/scope.md and program/rules.md |
+| `/recon` | `/recon` | Structured passive recon — fingerprinting, API surface, populates recon_notes.md and triage.md |
 | `/triage` | `/triage` | OSINT-enriched triage — enriches priority queue, writes triage-report.md |
+| `/new-finding` | `/new-finding <finding-name>` | Scaffolds finding folder, fills finding.md, updates triage and status |
 | `/submit` | `/submit <finding-name>` | Drafts complete platform submission report from finding data |
 | `/update-finding` | `/update-finding <finding-name> <status>` | Updates finding status, increments counters, git milestone commit |
 | `/scope-check` | `/scope-check <url-or-domain>` | Verifies in-scope / out-of-scope with tier and bounty range |
 
 ## Known Constraints
 
-<!-- Replace the examples below with constraints discovered during recon -->
-- **WAF/CDN:** TODO — e.g., "Cloudflare — blocks payloads with `<script`, `UNION SELECT`, `../` patterns"
-- **Rate Limits:** TODO — e.g., "100 req/min per IP on /api/; 10 login attempts before lockout"
-- **Auth:** TODO — e.g., "JWT tokens expire after 15min; refresh via POST /auth/refresh with refresh_token cookie"
-- **IP Restrictions:** TODO — e.g., "/admin restricted to internal IPs only"
-- **CSP:** TODO — e.g., "script-src 'self' cdn.target.com — no unsafe-inline"
-- **CORS:** TODO — e.g., "Reflects Origin only for *.target.com subdomains"
-- **Other:** TODO
+<!-- Add constraints as they are discovered during recon and testing — examples:
+- WAF/CDN: Cloudflare — blocks payloads with `<script`, `UNION SELECT`, `../` patterns
+- Rate Limits: 100 req/min per IP on /api/; 10 login attempts before lockout
+- Auth: JWT tokens expire after 15min; refresh via POST /auth/refresh
+- IP Restrictions: /admin restricted to internal IPs only
+- CSP: script-src 'self' cdn.target.com — no unsafe-inline
+-->
+- TODO
 
 ## Useful Commands
 
-```bash
-# Authenticate and capture session token
+<!-- Add commands as they are discovered during recon — examples:
 curl -s -X POST https://TARGET/auth/login \
   -H "Content-Type: application/json" \
   -d '{"email":"user@example.com","password":"password"}' | jq '.token'
+-->
 
-# Authenticated request template
-curl -s https://TARGET/api/endpoint \
-  -H "Authorization: Bearer TOKEN_HERE" \
-  -H "Content-Type: application/json"
-
-# Check response headers
-curl -sI https://TARGET | grep -iE 'server|x-powered-by|content-security|set-cookie|x-frame'
-
-# TODO: Add target-specific commands as they are discovered
+```bash
+# TODO
 ```
 CLAUDEEOF
 
@@ -509,11 +506,13 @@ echo "[+] Engagement initialized successfully!"
 echo ""
 echo "Next steps:"
 echo "  1. Paste program description into program/program_description.md"
-echo "  2. Paste rules of engagement into program/rules.md"
-echo "  3. Update CLAUDE.md with target URL, platform, tier details, and constraints"
-echo "  4. Launch Claude Code and run /recon to begin"
+echo "  2. Update CLAUDE.md: fill in Target URL and Platform (2 fields only)"
+echo "  3. Launch Claude Code: claude"
+echo "  4. Run /setup — agent will extract scope, tiers, and rules automatically"
+echo "  5. Review recon/scope.md and program/rules.md, then run /recon"
 echo ""
 echo "Available skills once inside Claude Code:"
+echo "  /setup              — parse program description → populate scope + rules"
 echo "  /recon              — structured passive reconnaissance"
 echo "  /triage             — OSINT-enriched priority queue"
 echo "  /new-finding <name> — scaffold a new vulnerability finding"
