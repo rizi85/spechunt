@@ -89,7 +89,7 @@ cat >> "${SCRIPT_DIR}/CLAUDE.md" << 'CLAUDEEOF'
 
 Source of truth — always read these files before testing anything:
 - **Full rules:** `program/rules.md`
-- **Structured scope (tiers, bounty table, out-of-scope list):** `recon/scope.md`
+- **Structured scope (tiers, bounty table, out-of-scope list):** `program/scope.md`
 
 Run `/setup` after pasting the program description to auto-populate these files.
 When in doubt about whether a target is in scope, run `/scope-check <url>`.
@@ -102,9 +102,9 @@ When in doubt about whether a target is in scope, run `/scope-check <url>`.
 ├── status.md                              # All findings at a glance
 ├── program/                               # [mandatory] Raw program info
 │   ├── program_description.md
-│   └── rules.md
+│   ├── rules.md
+│   └── scope.md                           # Structured scope (tiers, bounty table, out-of-scope)
 ├── recon/                                 # [mandatory] Reconnaissance outputs
-│   ├── scope.md                           # Structured scope (quick reference)
 │   ├── recon_notes.md                     # Raw recon findings
 │   ├── triage.md                          # Prioritized findings
 │   └── triage-report.md                   # OSINT-enriched triage
@@ -120,17 +120,16 @@ When in doubt about whether a target is in scope, run `/scope-check <url>`.
 
 ## Agent Workflow
 
-1. **Read `program/program_description.md`** — full program context
-2. **Read `recon/scope.md`** — structured scope, tiers, out-of-scope list
-3. **Read `status.md`** — current engagement state and findings
-4. **Read `recon/triage.md`** — priority order for testing
-5. **For any finding, read `findings/{name}/finding.md` first** — current state
+1. **Read `program/`** — description, rules, and scope (all program-defined constraints)
+2. **Read `status.md`** — current engagement state and findings
+3. **Read `recon/triage.md`** — priority order for testing
+4. **For any finding, read `findings/{name}/finding.md` first** — current state
 
 ## Agent Skills
 
 | Skill | Usage | What it does |
 |-------|-------|--------------|
-| `/setup` | `/setup` | Parses program_description.md → populates recon/scope.md and program/rules.md |
+| `/setup` | `/setup` | Parses program_description.md → populates program/scope.md and program/rules.md |
 | `/recon` | `/recon` | Structured passive recon — fingerprinting, API surface, populates recon_notes.md and triage.md |
 | `/triage` | `/triage` | OSINT-enriched triage — enriches priority queue, writes triage-report.md |
 | `/new-finding` | `/new-finding <finding-name>` | Scaffolds finding folder, fills finding.md, updates triage and status |
@@ -216,15 +215,16 @@ Bug bounty program information. This folder is **mandatory** for every engagemen
 
 | File | Description |
 |------|-------------|
-| `program_description.md` | Full program description from the bounty platform |
-| `rules.md` | Rules of engagement, scope, exclusions, rate limits |
+| `program_description.md` | Full program description from the bounty platform (raw paste) |
+| `rules.md` | Rules of engagement, structured by `/setup` from program description |
+| `scope.md` | Structured scope — tiers, bounty table, out-of-scope list, rate limits |
 
 ## Agent Instructions
 
 - Read these files **first** before any testing activity
-- Extract scope into `recon/scope.md` for quick reference
-- Reference `rules.md` before submitting any finding
-- Do not modify these files — they are source-of-truth copies from the platform
+- `program_description.md` is the raw source — do not modify it
+- `scope.md` and `rules.md` are populated by `/setup` — review and correct if needed
+- Reference `scope.md` for all scope checks; use `/scope-check <url>` when unsure
 EOF
 
 cat > "${SCRIPT_DIR}/program/program_description.md" << EOF
@@ -236,40 +236,14 @@ EOF
 cat > "${SCRIPT_DIR}/program/rules.md" << EOF
 # Rules of Engagement
 
-TODO: Paste the full rules of engagement from the bounty platform here.
+TODO: Populated by /setup from program_description.md.
 EOF
 
-echo "    [+] program/program_description.md"
-echo "    [+] program/rules.md"
-
-# --- Generate recon/ files ------------------------------------------------
-
-cat > "${SCRIPT_DIR}/recon/README.md" << 'EOF'
-# recon/
-
-Reconnaissance phase outputs. This folder is **mandatory** for every engagement.
-
-## Contents
-
-| File | Description |
-|------|-------------|
-| `scope.md` | Structured scope summary (from program description) |
-| `recon_notes.md` | Raw reconnaissance findings |
-| `triage.md` | Prioritized findings queue with scores and status |
-| `triage-report.md` | OSINT-enriched triage (optional) |
-
-## Agent Instructions
-
-- `scope.md` is the quick-reference for scope checks — read before testing
-- `triage.md` defines the testing priority order — work top-down
-- Update findings status in `triage.md` as they are confirmed or ruled out
-EOF
-
-cat > "${SCRIPT_DIR}/recon/scope.md" << 'EOF'
+cat > "${SCRIPT_DIR}/program/scope.md" << 'EOF'
 # Scope Summary
 
 Structured scope extracted from program description and rules of engagement.
-Agents should reference this file for quick scope checks during active testing.
+Populated by `/setup` — run it after pasting program_description.md.
 
 ## In-Scope Assets
 
@@ -297,7 +271,7 @@ Agents should reference this file for quick scope checks during active testing.
 
 ## Out of Scope
 
-TODO: List out-of-scope items from program rules.
+TODO
 
 ## Tech Stack
 
@@ -310,6 +284,32 @@ TODO: List out-of-scope items from program rules.
 | URL | Purpose |
 |-----|---------|
 | TODO | |
+EOF
+
+echo "    [+] program/program_description.md"
+echo "    [+] program/rules.md"
+echo "    [+] program/scope.md (run /setup to populate)"
+
+# --- Generate recon/ files ------------------------------------------------
+
+cat > "${SCRIPT_DIR}/recon/README.md" << 'EOF'
+# recon/
+
+Reconnaissance phase outputs. This folder is **mandatory** for every engagement.
+
+## Contents
+
+| File | Description |
+|------|-------------|
+| `recon_notes.md` | Raw reconnaissance findings (populated by `/recon`) |
+| `triage.md` | Prioritized findings queue with scores and status |
+| `triage-report.md` | OSINT-enriched triage (populated by `/triage`) |
+
+## Agent Instructions
+
+- `triage.md` defines the testing priority order — work top-down
+- Update finding status in `triage.md` as they are confirmed or ruled out
+- For scope checks, read `program/scope.md` or run `/scope-check <url>`
 EOF
 
 cat > "${SCRIPT_DIR}/recon/recon_notes.md" << EOF
@@ -442,7 +442,6 @@ cat > "${SCRIPT_DIR}/recon/triage-report.md" << EOF
 -->
 EOF
 
-echo "    [+] recon/scope.md"
 echo "    [+] recon/recon_notes.md"
 echo "    [+] recon/triage.md"
 echo "    [+] recon/triage-report.md"
@@ -509,7 +508,7 @@ echo "  1. Paste program description into program/program_description.md"
 echo "  2. Update CLAUDE.md: fill in Target URL and Platform (2 fields only)"
 echo "  3. Launch Claude Code: claude"
 echo "  4. Run /setup — agent will extract scope, tiers, and rules automatically"
-echo "  5. Review recon/scope.md and program/rules.md, then run /recon"
+echo "  5. Review program/scope.md and program/rules.md, then run /recon"
 echo ""
 echo "Available skills once inside Claude Code:"
 echo "  /setup              — parse program description → populate scope + rules"

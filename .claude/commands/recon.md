@@ -4,7 +4,7 @@ Conduct structured reconnaissance on the target. Follow this sequence exactly:
 - Read `program/program_description.md` and `program/rules.md`
 - Extract all in-scope assets, out-of-scope items, and rate limits
 
-**2. Populate `recon/scope.md`**
+**2. Populate `program/scope.md`**
 - Fill the In-Scope Assets table: asset, type (web/api/mobile/infra), tier, bounty range
 - Fill the Bounty Table from the program rules
 - List all Out of Scope items verbatim from the rules

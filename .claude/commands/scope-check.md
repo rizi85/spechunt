@@ -5,7 +5,7 @@ Usage: `/scope-check <url-or-domain>`
 Target to check: `$ARGUMENTS`
 
 **1. Load scope definitions**
-- Read `recon/scope.md` — in-scope assets, tiers, out-of-scope list
+- Read `program/scope.md` — in-scope assets, tiers, out-of-scope list
 - Read `program/rules.md` — check for nuanced scope rules, path exclusions, vulnerability type exclusions
 
 **2. Evaluate the target**

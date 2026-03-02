@@ -23,7 +23,7 @@ cd target-name
 claude
 
 # 6. Run /setup — the agent reads program_description.md and
-#    auto-populates recon/scope.md and program/rules.md with
+#    auto-populates program/scope.md and program/rules.md with
 #    structured tiers, bounty tables, out-of-scope lists, etc.
 #    Review the output, correct anything, then continue.
 
@@ -61,11 +61,11 @@ After running `./init.sh`, the directory looks like this:
 ├── .templates/                            # File templates (used by scripts)
 ├── CLAUDE.md                              # Agent instructions for this engagement
 ├── status.md                              # Dashboard — all findings at a glance
-├── program/                               # [mandatory] Raw program info from platform
+├── program/                               # [mandatory] Raw program info + structured scope
 │   ├── program_description.md             # Full program description (copy-paste)
-│   └── rules.md                           # Rules of engagement, scope, exclusions
-├── recon/                                 # [mandatory] Reconnaissance phase outputs
-│   ├── scope.md                           # Structured scope (quick agent reference)
+│   ├── rules.md                           # Rules of engagement (structured by /setup)
+│   └── scope.md                           # Tiers, bounty table, out-of-scope (structured by /setup)
+├── recon/                                 # [mandatory] Agent-discovered target data
 │   ├── recon_notes.md                     # Raw recon findings (9 structured sections)
 │   ├── triage.md                          # Prioritized findings queue
 │   └── triage-report.md                   # OSINT-enriched triage (populated by /triage)
@@ -86,7 +86,7 @@ Spec Hunt includes seven slash commands that agents invoke during a session. The
 
 | Skill | Usage | What it does |
 |-------|-------|--------------|
-| `/setup` | `/setup` | Reads `program/program_description.md` and auto-populates `recon/scope.md` (tiers, bounty table, out-of-scope list, rate limits) and structures `program/rules.md`. Run once after pasting the program description. |
+| `/setup` | `/setup` | Reads `program/program_description.md` and auto-populates `program/scope.md` (tiers, bounty table, out-of-scope list, rate limits) and structures `program/rules.md`. Run once after pasting the program description. |
 | `/recon` | `/recon` | Structured passive recon — fingerprints assets, maps API surface, documents auth flows, populates recon_notes.md and triage.md |
 | `/triage` | `/triage` | OSINT-enriches each item in triage.md (CVEs, public exploits, complexity), writes triage-report.md, re-orders the priority queue |
 | `/new-finding` | `/new-finding <finding-name>` | Runs `new_finding.sh`, then auto-fills finding.md (title, severity, CWE, summary, attack chain, impact) and updates recon/triage.md |
@@ -98,11 +98,10 @@ Spec Hunt includes seven slash commands that agents invoke during a session. The
 
 The framework is designed so AI agents always know what to read first:
 
-1. `program/` — Understand scope, rules, what's out of scope
-2. `recon/scope.md` — Quick-reference for scope checks during testing
-3. `status.md` — Current state of the engagement and all findings
-4. `recon/triage.md` — Priority order for testing
-5. `findings/{name}/finding.md` — Current state of any specific finding
+1. `program/` — All program-defined constraints: description, rules, scope
+2. `status.md` — Current state of the engagement and all findings
+3. `recon/triage.md` — Priority order for testing
+4. `findings/{name}/finding.md` — Current state of any specific finding
 
 ## Finding Lifecycle
 

@@ -12,7 +12,7 @@ Bug bounty research workspace for **{TARGET_NAME}** on {PLATFORM}.
 
 Source of truth — always read these files before testing anything:
 - **Full rules:** `program/rules.md`
-- **Structured scope (tiers, bounty table, out-of-scope list):** `recon/scope.md`
+- **Structured scope (tiers, bounty table, out-of-scope list):** `program/scope.md`
 
 When in doubt about whether a target is in scope, run `/scope-check <url>`.
 
@@ -42,17 +42,16 @@ When in doubt about whether a target is in scope, run `/scope-check <url>`.
 
 ## Agent Workflow
 
-1. **Read `program/program_description.md`** — full program context
-2. **Read `recon/scope.md`** — structured scope, tiers, out-of-scope list
-3. **Read `status.md`** — current engagement state and findings
-4. **Read `recon/triage.md`** — priority order for testing
-5. **For any finding, read `findings/{name}/finding.md` first** — current state
+1. **Read `program/`** — description, rules, and scope (all program-defined constraints)
+2. **Read `status.md`** — current engagement state and findings
+3. **Read `recon/triage.md`** — priority order for testing
+4. **For any finding, read `findings/{name}/finding.md` first** — current state
 
 ## Agent Skills
 
 | Skill | Usage | What it does |
 |-------|-------|--------------|
-| `/setup` | `/setup` | Parses program_description.md → populates recon/scope.md and program/rules.md |
+| `/setup` | `/setup` | Parses program_description.md → populates program/scope.md and program/rules.md |
 | `/recon` | `/recon` | Structured passive recon — fingerprinting, API surface, populates recon_notes.md and triage.md |
 | `/triage` | `/triage` | OSINT-enriched triage — enriches priority queue, writes triage-report.md |
 | `/new-finding` | `/new-finding <finding-name>` | Scaffolds finding folder, fills finding.md, updates triage and status |

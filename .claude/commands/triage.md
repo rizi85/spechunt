@@ -3,7 +3,7 @@ Generate an OSINT-enriched triage report from recon notes and populate the prior
 **1. Read current state**
 - Read `recon/recon_notes.md` — all raw recon findings
 - Read `recon/triage.md` — current priority queue
-- Read `recon/scope.md` — bounty tiers and worst-case scenarios
+- Read `program/scope.md` — bounty tiers and worst-case scenarios
 
 **2. Enrich each triage item with OSINT research**
 

@@ -7,7 +7,7 @@ Usage: `/submit <finding-name>`
 - List files in `findings/$ARGUMENTS/evidences/` — note all evidence filenames
 - List files in `findings/$ARGUMENTS/poc/` — get exploit code/steps
 - Read `program/rules.md` — check submission requirements, preferred format, severity definitions
-- Read `recon/scope.md` — confirm asset tier for bounty range estimate
+- Read `program/scope.md` — confirm asset tier for bounty range estimate
 
 **2. Generate `findings/$ARGUMENTS/writeup/submission.md`**
 

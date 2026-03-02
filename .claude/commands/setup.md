@@ -6,7 +6,7 @@ Run this immediately after pasting content into `program/program_description.md`
 - Read `program/program_description.md` in full
 - Read `program/rules.md` if it has content beyond the TODO placeholder
 
-**2. Populate `recon/scope.md`**
+**2. Populate `program/scope.md`**
 
 Extract and structure the following from the program description:
 - **In-Scope Assets table** — every explicitly listed domain, subdomain wildcard, API, or mobile app, with its type (web/api/mobile/infra), tier (if mentioned), and bounty range
@@ -41,6 +41,6 @@ After populating the files, summarise what was found:
 
 **6. Ask the user to review**
 
-Prompt: "Please review `recon/scope.md` and `program/rules.md` — correct anything that was misread or missing, then run `/recon` to begin reconnaissance."
+Prompt: "Please review `program/scope.md` and `program/rules.md` — correct anything that was misread or missing, then run `/recon` to begin reconnaissance."
 
 Do not run `/recon` automatically. The user should verify the extracted scope before any testing begins.
