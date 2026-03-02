@@ -498,12 +498,36 @@ if git -C "$SCRIPT_DIR" rev-parse --git-dir > /dev/null 2>&1; then
         echo "    [+] Git commit: engagement initialized" || true
 fi
 
+# --- Rename project directory ---------------------------------------------
+
+TARGET_SLUG=$(echo "$TARGET_NAME" | tr '[:upper:]' '[:lower:]' | tr ' ' '-' | tr -cd 'a-z0-9-' | tr -s '-' | sed 's/^-*//;s/-*$//')
+PARENT_DIR="$(dirname "$SCRIPT_DIR")"
+CURRENT_DIR_NAME="$(basename "$SCRIPT_DIR")"
+NEW_DIR="${PARENT_DIR}/${TARGET_SLUG}"
+DIR_RENAMED=0
+
+if [ "$CURRENT_DIR_NAME" != "$TARGET_SLUG" ]; then
+    if [ -d "$NEW_DIR" ]; then
+        echo "    [!] Cannot rename: '${TARGET_SLUG}' already exists in ${PARENT_DIR}"
+        echo "    [~] Keeping directory name: ${CURRENT_DIR_NAME}"
+    else
+        mv "$SCRIPT_DIR" "$NEW_DIR"
+        echo "    [+] Directory renamed: ${CURRENT_DIR_NAME} → ${TARGET_SLUG}"
+        DIR_RENAMED=1
+    fi
+fi
+
 # --- Done -----------------------------------------------------------------
 
 echo ""
 echo "[+] Engagement initialized successfully!"
 echo ""
 echo "Next steps:"
+if [ "$DIR_RENAMED" -eq 1 ]; then
+echo "  0. Your directory was renamed — update your shell first:"
+echo "     cd \"${NEW_DIR}\""
+echo ""
+fi
 echo "  1. Paste program description into program/program_description.md"
 echo "  2. Update CLAUDE.md: fill in Target URL and Platform (2 fields only)"
 echo "  3. Launch Claude Code: claude"
