@@ -9,16 +9,16 @@
 
 | Finding | Status | Severity | Asset | Bounty | Next Action |
 |---------|--------|----------|-------|--------|-------------|
-| [xss-search-page](findings/xss-search-page/finding.md) | submitted | Unknown | TODO | - | Initial investigation |
+| [xss-search-page](findings/xss-search-page/finding.md) | accepted | Unknown | TODO | - | Initial investigation |
 | | | | | | |
 
 ## Engagement Summary
 
 - **Total findings discovered:** 1
 - **Submitted:** 1
-- **Accepted:** 0
+- **Accepted:** 1
 - **Rejected/Disputed:** 0
-- **Bounty earned:** $0
+- **Bounty earned:** $750
 
 ## Blockers
 
