@@ -1,0 +1,58 @@
+# ===========================================================================
+# Spec Hunt — .gitignore
+# ===========================================================================
+# IMPORTANT: evidence files, PoC scripts, and writeups SHOULD be committed
+# (they are your audit trail). This file only blocks common patterns that
+# are likely to contain secrets or credentials.
+#
+# Never use `git add -A` or `git add .` — always stage files explicitly.
+# ===========================================================================
+
+# --- Credentials & secrets -------------------------------------------------
+.env
+.env.*
+*.key
+*.pem
+*.p12
+*.pfx
+*.crt
+*.cer
+credentials.json
+secrets.json
+tokens.json
+*.token
+*.secret
+config.local.*
+
+# --- Files likely to contain captured auth material ------------------------
+# (rename your evidence files to avoid these patterns if needed)
+*_cookies.txt
+*_headers.txt
+*_auth.*
+*_session.*
+*_token.*
+
+# --- OS & editor noise -----------------------------------------------------
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# --- Language artifacts ----------------------------------------------------
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+node_modules/
+*.class
+target/
+
+# --- Logs & temp files -----------------------------------------------------
+*.log
+*.tmp
+*.bak
+*.orig

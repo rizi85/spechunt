@@ -25,6 +25,18 @@ VALID_STATUSES="discovered exploring exploited submitted accepted rejected dispu
 
 # --- Validation -----------------------------------------------------------
 
+if [ $# -eq 1 ] && { [ "$1" = "--help" ] || [ "$1" = "-h" ]; }; then
+    echo "Usage: $0 <finding-name> <new-status> [--bounty <amount>]"
+    echo ""
+    echo "Valid statuses: ${VALID_STATUSES}"
+    echo ""
+    echo "Examples:"
+    echo "  $0 sql-injection exploited"
+    echo "  $0 xss-search-page submitted"
+    echo "  $0 ssrf-webhook accepted --bounty 500"
+    exit 0
+fi
+
 if [ $# -lt 2 ]; then
     echo "Usage: $0 <finding-name> <new-status> [--bounty <amount>]"
     echo ""
@@ -111,10 +123,21 @@ if [ -f "$STATUS_FILE" ]; then
     sed -i "s/^\*\*Last Updated:\*\*.*/\*\*Last Updated:\*\* ${TODAY}/" "$STATUS_FILE"
 
     # Update the finding's row status column in the findings table
-    # Matches the link pattern and replaces only the status cell
     sed -i "/\[${FINDING_NAME}\]/ s/| ${OLD_STATUS} |/| ${NEW_STATUS} |/" "$STATUS_FILE"
 
-    echo "    [+] Updated status.md finding row"
+    # Verify the status column update was applied
+    if grep -q "\[${FINDING_NAME}\]" "$STATUS_FILE" && \
+       grep "\[${FINDING_NAME}\]" "$STATUS_FILE" | grep -q "| ${NEW_STATUS} |"; then
+        echo "    [+] Updated status.md finding row"
+    else
+        echo "    [!] Warning: status.md finding row may not have updated — check manually"
+    fi
+
+    # Update the bounty column in the findings table when accepted
+    if [ -n "$BOUNTY_AMOUNT" ] && [ "$NEW_STATUS" = "accepted" ]; then
+        sed -i "/\[${FINDING_NAME}\]/ s/| - |/| \$${BOUNTY_AMOUNT} |/" "$STATUS_FILE"
+        echo "    [+] Updated status.md bounty column: \$${BOUNTY_AMOUNT}"
+    fi
 
     # --- Counter updates --------------------------------------------------
 

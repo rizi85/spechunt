@@ -25,6 +25,19 @@ TEMPLATES_DIR="${SCRIPT_DIR}/.templates"
 
 # --- Validation -----------------------------------------------------------
 
+if [ $# -eq 1 ] && { [ "$1" = "--help" ] || [ "$1" = "-h" ]; }; then
+    echo "Usage: $0 <TargetName>"
+    echo ""
+    echo "Initializes the current directory as a new bug bounty engagement."
+    echo "Renames the project directory to a slug of the target name."
+    echo "Run once per engagement clone."
+    echo ""
+    echo "Examples:"
+    echo "  $0 TargetCorp"
+    echo "  $0 \"My Target\""
+    exit 0
+fi
+
 if [ $# -lt 1 ] || [ -z "$1" ]; then
     echo "Usage: $0 <TargetName>"
     echo ""
@@ -133,9 +146,11 @@ When in doubt about whether a target is in scope, run `/scope-check <url>`.
 | `/recon` | `/recon` | Structured passive recon — fingerprinting, API surface, populates recon_notes.md and triage.md |
 | `/triage` | `/triage` | OSINT-enriched triage — enriches priority queue, writes triage-report.md |
 | `/new-finding` | `/new-finding <finding-name>` | Scaffolds finding folder, fills finding.md, updates triage and status |
-| `/submit` | `/submit <finding-name>` | Drafts complete platform submission report from finding data |
+| `/submit` | `/submit <finding-name>` | Drafts platform-specific submission report (H1, Bugcrowd, Intigriti, etc.) |
 | `/update-finding` | `/update-finding <finding-name> <status>` | Updates finding status, increments counters, git milestone commit |
 | `/scope-check` | `/scope-check <url-or-domain>` | Verifies in-scope / out-of-scope with tier and bounty range |
+| `/status` | `/status` | Engagement snapshot — finding counts, bounty total, recommended next action |
+| `/close` | `/close` | Closes engagement, generates ENGAGEMENT_SUMMARY.md, final git commit |
 
 ## Known Constraints
 
@@ -506,7 +521,11 @@ CURRENT_DIR_NAME="$(basename "$SCRIPT_DIR")"
 NEW_DIR="${PARENT_DIR}/${TARGET_SLUG}"
 DIR_RENAMED=0
 
-if [ "$CURRENT_DIR_NAME" != "$TARGET_SLUG" ]; then
+if [ -z "$TARGET_SLUG" ]; then
+    echo "    [!] Cannot generate a valid directory name from: '${TARGET_NAME}'"
+    echo "    [~] Use alphanumeric characters and hyphens (e.g. \"TargetCorp\", \"my-target\")"
+    echo "    [~] Skipping directory rename — engagement files were still created."
+elif [ "$CURRENT_DIR_NAME" != "$TARGET_SLUG" ]; then
     if [ -d "$NEW_DIR" ]; then
         echo "    [!] Cannot rename: '${TARGET_SLUG}' already exists in ${PARENT_DIR}"
         echo "    [~] Keeping directory name: ${CURRENT_DIR_NAME}"

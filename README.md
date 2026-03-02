@@ -40,7 +40,9 @@ claude
 |--------|-------|-------------|
 | `init.sh` | `./init.sh <TargetName>` | Initializes this directory as a new engagement — creates CLAUDE.md, status.md, program/, recon/, findings/ with all READMEs and templates. Renames the project directory to a slug of the target name (e.g. `"My Target"` → `my-target`). Git-commits the initial workspace. Run once per engagement. |
 | `new_finding.sh` | `./new_finding.sh <finding-name>` | Creates a finding subfolder with finding.md (YAML frontmatter), a pre-filled submission draft, all 5 subfolders with READMEs, and auto-updates status.md + findings/README.md. Git-commits on creation. Finding names must be lowercase, hyphen-separated (e.g. `sql-injection`). |
-| `update_finding.sh` | `./update_finding.sh <finding-name> <status> [--bounty <amount>]` | Updates a finding's status in finding.md and status.md, increments the relevant engagement counters, stamps the submission date, and git-commits at key milestones (submitted, accepted, rejected, disputed). |
+| `update_finding.sh` | `./update_finding.sh <finding-name> <status> [--bounty <amount>]` | Updates a finding's status in finding.md and status.md, increments the relevant engagement counters, stamps the submission date, and git-commits at key milestones (submitted, accepted, rejected, disputed). Warns if the status.md row update cannot be verified. |
+
+All three scripts support `--help` / `-h` for usage information.
 
 ## Engagement Structure
 
@@ -53,12 +55,16 @@ After running `./init.sh`, the directory looks like this:
 ├── new_finding.sh                         # Finding scaffolding script
 ├── update_finding.sh                      # Finding status updater
 ├── .claude/commands/                      # Agent slash commands (skills)
-│   ├── new-finding.md                     # /new-finding <name>
+│   ├── setup.md                           # /setup
 │   ├── recon.md                           # /recon
 │   ├── triage.md                          # /triage
+│   ├── new-finding.md                     # /new-finding <name>
 │   ├── submit.md                          # /submit <name>
 │   ├── update-finding.md                  # /update-finding <name> <status>
-│   └── scope-check.md                     # /scope-check <url>
+│   ├── scope-check.md                     # /scope-check <url>
+│   ├── status.md                          # /status
+│   └── close.md                           # /close
+├── .gitignore                             # Protects secrets and sensitive files
 ├── .templates/                            # File templates (used by scripts)
 ├── CLAUDE.md                              # Agent instructions for this engagement
 ├── status.md                              # Dashboard — all findings at a glance
@@ -83,17 +89,19 @@ After running `./init.sh`, the directory looks like this:
 
 ## Agent Skills
 
-Spec Hunt includes seven slash commands that agents invoke during a session. These live in `.claude/commands/` and are available automatically when Claude Code is launched in this directory.
+Spec Hunt includes nine slash commands that agents invoke during a session. These live in `.claude/commands/` and are available automatically when Claude Code is launched in this directory.
 
 | Skill | Usage | What it does |
 |-------|-------|--------------|
 | `/setup` | `/setup` | Reads `program/program_description.md` and auto-populates `program/scope.md` (tiers, bounty table, out-of-scope list, rate limits) and structures `program/rules.md`. Run once after pasting the program description. |
-| `/recon` | `/recon` | Structured passive recon — fingerprints assets, maps API surface, documents auth flows, populates recon_notes.md and triage.md |
+| `/recon` | `/recon` | Structured passive recon — fingerprints assets, maps API surface, documents auth flows, populates recon_notes.md and triage.md. Pre-flight scope check aborts early if scope.md is not yet populated. |
 | `/triage` | `/triage` | OSINT-enriches each item in triage.md (CVEs, public exploits, complexity), writes triage-report.md, re-orders the priority queue |
 | `/new-finding` | `/new-finding <finding-name>` | Runs `new_finding.sh`, then auto-fills finding.md (title, severity, CWE, summary, attack chain, impact) and updates recon/triage.md |
-| `/submit` | `/submit <finding-name>` | Reads finding.md + evidences/ + poc/ and drafts a complete platform submission report at `writeup/submission.md` |
-| `/update-finding` | `/update-finding <finding-name> <status>` | Runs `update_finding.sh`, verifies finding.md YAML and status.md counters were updated, handles submission date and bounty recording |
+| `/submit` | `/submit <finding-name>` | Reads finding.md + evidences/ + poc/ and drafts a complete platform submission report at `writeup/submission.md`. Detects the platform from CLAUDE.md and applies platform-specific formatting (HackerOne, Bugcrowd, Intigriti, YesWeHack). |
+| `/update-finding` | `/update-finding <finding-name> <status>` | Runs `update_finding.sh`, verifies finding.md YAML and status.md counters were updated, handles submission date and bounty recording. Includes a full dispute workflow for rejected findings. |
 | `/scope-check` | `/scope-check <url-or-domain>` | Reads scope.md and rules.md, evaluates the target against exact matches, wildcards, and path exclusions — responds IN SCOPE / OUT OF SCOPE / AMBIGUOUS with the relevant rule quoted |
+| `/status` | `/status` | Reads status.md and active finding.md files — outputs current phase, finding counts, bounty total, top 3 priority queue items, and the recommended next action |
+| `/close` | `/close` | Verifies no active findings, generates `ENGAGEMENT_SUMMARY.md` with results table and key learnings, marks the engagement closed in status.md, and creates a final git commit |
 
 ## Agent Workflow
 
@@ -149,6 +157,7 @@ Each finding also gets a pre-filled `writeup/submission.md` scaffold covering ti
 |----------|------------|---------|
 | Finding folders | `lowercase-hyphenated` | `sql-injection`, `xss-search-page` |
 | Evidence files | `YYYY-MM-DD_NN_description.ext` | `2026-03-01_01_initial-request.txt` |
+| PoC files | `poc_NN_description.ext` | `poc_01_initial-request.http`, `poc_02_automated-exploit.py` |
 | Comms files | `YYYY-MM-DD_NN_description.md` | `2026-03-03_02_triager-request-info.md` |
 
 ## Configuring CLAUDE.md
@@ -169,11 +178,22 @@ The **Known Constraints** and **Useful Commands** sections are populated increme
 Every significant action is recorded as a git commit, giving you a full audit trail:
 
 ```
+close(testcorp): engagement closed — $500 earned, 1 finding accepted
 finding(xss-search-page): status → accepted ($500)
 finding(xss-search-page): status → submitted
 finding(xss-search-page): discovered
 init(TestCorp): engagement workspace initialized
 ```
+
+## Sensitive File Protection
+
+A `.gitignore` is included to prevent accidental commits of credentials, keys, and environment files:
+
+- `.env*`, `*.key`, `*.pem`, `*.p12`, `credentials.json`
+- Auth/token files: `*_auth.*`, `*_token.*`, `*_secret.*`, `*_password.*`
+- OS and editor noise (`.DS_Store`, Thumbs.db, `.vscode/`, etc.)
+
+Evidence and PoC files should be committed explicitly by file name — never use `git add -A` or `git add .` in an engagement directory.
 
 ## Starting a New Engagement
 

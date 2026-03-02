@@ -1,15 +1,19 @@
 Conduct structured reconnaissance on the target. Follow this sequence exactly:
 
+**0. Pre-flight scope check**
+
+Before doing anything, read `program/scope.md` and verify it has been populated (no TODO values in the In-Scope Assets table). If the file still contains TODO placeholders, stop and instruct the user:
+
+> "`program/scope.md` has not been populated yet. Run `/setup` first to extract scope from the program description, then review it before starting recon."
+
+Do not proceed until scope.md is populated. Testing without a defined scope risks hitting out-of-scope assets.
+
 **1. Ingest program data**
 - Read `program/program_description.md` and `program/rules.md`
 - Extract all in-scope assets, out-of-scope items, and rate limits
 
-**2. Populate `program/scope.md`**
-- Fill the In-Scope Assets table: asset, type (web/api/mobile/infra), tier, bounty range
-- Fill the Bounty Table from the program rules
-- List all Out of Scope items verbatim from the rules
-- Document the tech stack if mentioned
-- Set the Rate Limits field
+**2. Update `status.md`**
+- Set Reconnaissance → `In Progress`
 
 **3. Passive recon (stay within rate limits at all times)**
 
@@ -34,7 +38,6 @@ For each in-scope asset, collect:
 - Mark findings that overlap with known CVEs or public writeups
 
 **6. Update `status.md` phase status**
-- Set Reconnaissance → `In Progress` at the start
-- Set Reconnaissance → `Complete` and Triage → `In Progress` when done
+- Set Reconnaissance → `Complete` and Triage → `In Progress`
 
-Never test out-of-scope assets. When in doubt, run `/scope-check <url>` first.
+Never test out-of-scope assets. When in doubt about a specific URL, run `/scope-check <url>` first.

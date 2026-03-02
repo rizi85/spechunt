@@ -24,6 +24,19 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # --- Validation -----------------------------------------------------------
 
+if [ $# -eq 1 ] && { [ "$1" = "--help" ] || [ "$1" = "-h" ]; }; then
+    echo "Usage: $0 <finding-name>"
+    echo ""
+    echo "Creates a structured finding folder inside findings/."
+    echo "Names must be lowercase, hyphen-separated (e.g. sql-injection)."
+    echo ""
+    echo "Examples:"
+    echo "  $0 sql-injection"
+    echo "  $0 xss-search-page"
+    echo "  $0 ssrf-webhook"
+    exit 0
+fi
+
 if [ $# -lt 1 ] || [ -z "$1" ]; then
     echo "Usage: $0 <finding-name>"
     echo ""
@@ -166,12 +179,21 @@ cat > "${FINDING_DIR}/poc/README.md" << 'EOF'
 
 Proof-of-concept exploit code and automation scripts.
 
+## Naming Convention
+
+```
+poc_NN_description.ext
+```
+
+Examples: `poc_01_initial-request.http`, `poc_02_automated-exploit.py`
+
 ## Agent Instructions
 
-- PoC files should be self-contained and reproducible
-- Include clear comments explaining each step of the exploit
-- Separate production PoCs (for submission) from local test variants
-- Automation scripts (CDP, Selenium, etc.) go here alongside the PoC files
+- `poc_01_*` is the submission PoC — clean, minimal, self-contained
+- Higher-numbered files are progressions: deeper exploitation, automation, impact amplification
+- Every file must include a comment block: target, prerequisite, expected result
+- Do not include real credentials — use placeholders (`VICTIM_TOKEN`, `TARGET_HOST`)
+- Reference PoC files in submission.md using relative paths: `../poc/poc_01_*.ext`
 EOF
 
 cat > "${FINDING_DIR}/writeup/README.md" << 'EOF'

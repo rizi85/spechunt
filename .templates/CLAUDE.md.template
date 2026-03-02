@@ -24,9 +24,9 @@ When in doubt about whether a target is in scope, run `/scope-check <url>`.
 ├── status.md                    # All findings at a glance
 ├── program/                     # [mandatory] Raw program info from platform
 │   ├── program_description.md
-│   └── rules.md
+│   ├── rules.md
+│   └── scope.md                 # Structured scope (tiers, bounty table)
 ├── recon/                       # [mandatory] Reconnaissance outputs
-│   ├── scope.md                 # Structured scope (quick reference)
 │   ├── recon_notes.md           # Raw recon findings
 │   ├── triage.md                # Prioritized findings queue
 │   └── triage-report.md         # OSINT-enriched triage
@@ -58,6 +58,8 @@ When in doubt about whether a target is in scope, run `/scope-check <url>`.
 | `/submit` | `/submit <finding-name>` | Drafts complete platform submission report from finding data |
 | `/update-finding` | `/update-finding <finding-name> <status>` | Updates finding status, increments counters, git milestone commit |
 | `/scope-check` | `/scope-check <url-or-domain>` | Verifies in-scope / out-of-scope with tier and bounty range |
+| `/status` | `/status` | Current engagement summary — findings, bounty totals, recommended next action |
+| `/close` | `/close` | Generates final engagement summary report and closes the engagement |
 
 ## Known Constraints
 
