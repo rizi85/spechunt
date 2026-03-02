@@ -7,12 +7,13 @@ Each clone of Spec Hunt is a **single engagement** — one target, one repo.
 ## Quick Start
 
 ```bash
-# 1. Clone the framework (name it after your target)
-git clone <repo-url> target-name
-cd target-name
+# 1. Clone the framework
+git clone <repo-url>
+cd spechunt
 
-# 2. Initialize the engagement
+# 2. Initialize the engagement — the directory is renamed automatically
 ./init.sh "Target Name"
+cd ../target-name        # navigate to the renamed directory
 
 # 3. Paste the full program description from the bounty platform
 #    into program/program_description.md
@@ -37,7 +38,7 @@ claude
 
 | Script | Usage | Description |
 |--------|-------|-------------|
-| `init.sh` | `./init.sh <TargetName>` | Initializes this directory as a new engagement — creates CLAUDE.md, status.md, program/, recon/, findings/ with all READMEs and templates. Git-commits the initial workspace. Run once per engagement. |
+| `init.sh` | `./init.sh <TargetName>` | Initializes this directory as a new engagement — creates CLAUDE.md, status.md, program/, recon/, findings/ with all READMEs and templates. Renames the project directory to a slug of the target name (e.g. `"My Target"` → `my-target`). Git-commits the initial workspace. Run once per engagement. |
 | `new_finding.sh` | `./new_finding.sh <finding-name>` | Creates a finding subfolder with finding.md (YAML frontmatter), a pre-filled submission draft, all 5 subfolders with READMEs, and auto-updates status.md + findings/README.md. Git-commits on creation. Finding names must be lowercase, hyphen-separated (e.g. `sql-injection`). |
 | `update_finding.sh` | `./update_finding.sh <finding-name> <status> [--bounty <amount>]` | Updates a finding's status in finding.md and status.md, increments the relevant engagement counters, stamps the submission date, and git-commits at key milestones (submitted, accepted, rejected, disputed). |
 
@@ -179,12 +180,13 @@ init(TestCorp): engagement workspace initialized
 For each new target, clone a fresh copy:
 
 ```bash
-git clone <repo-url> new-target
-cd new-target
+git clone <repo-url>
+cd spechunt
 ./init.sh "New Target"
+cd ../new-target    # directory was renamed automatically
 ```
 
-Each engagement is fully self-contained — its own repo, its own history.
+The `init.sh` script slugifies the target name and renames the cloned directory to match — no need to name the clone manually upfront. Each engagement is fully self-contained with its own repo and git history.
 
 ## License
 
