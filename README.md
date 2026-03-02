@@ -55,6 +55,7 @@ After running `./init.sh`, the directory looks like this:
 ├── new_finding.sh                         # Finding scaffolding script
 ├── update_finding.sh                      # Finding status updater
 ├── .claude/commands/                      # Agent slash commands (skills)
+│   ├── help.md                            # /help
 │   ├── setup.md                           # /setup
 │   ├── recon.md                           # /recon
 │   ├── triage.md                          # /triage
@@ -89,10 +90,11 @@ After running `./init.sh`, the directory looks like this:
 
 ## Agent Skills
 
-Spec Hunt includes nine slash commands that agents invoke during a session. These live in `.claude/commands/` and are available automatically when Claude Code is launched in this directory.
+Spec Hunt includes ten slash commands that agents invoke during a session. These live in `.claude/commands/` and are available automatically when Claude Code is launched in this directory.
 
 | Skill | Usage | What it does |
 |-------|-------|--------------|
+| `/help` | `/help` | Lists all available skills with usage and descriptions |
 | `/setup` | `/setup` | Reads `program/program_description.md` and auto-populates `program/scope.md` (tiers, bounty table, out-of-scope list, rate limits) and structures `program/rules.md`. Run once after pasting the program description. |
 | `/recon` | `/recon` | Structured passive recon — fingerprints assets, maps API surface, documents auth flows, populates recon_notes.md and triage.md. Pre-flight scope check aborts early if scope.md is not yet populated. |
 | `/triage` | `/triage` | OSINT-enriches each item in triage.md (CVEs, public exploits, complexity), writes triage-report.md, re-orders the priority queue |

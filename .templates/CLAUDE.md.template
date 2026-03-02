@@ -51,6 +51,7 @@ When in doubt about whether a target is in scope, run `/scope-check <url>`.
 
 | Skill | Usage | What it does |
 |-------|-------|--------------|
+| `/help` | `/help` | Lists all available skills with usage and descriptions |
 | `/setup` | `/setup` | Parses program_description.md → populates program/scope.md and program/rules.md |
 | `/recon` | `/recon` | Structured passive recon — fingerprinting, API surface, populates recon_notes.md and triage.md |
 | `/triage` | `/triage` | OSINT-enriched triage — enriches priority queue, writes triage-report.md |
