@@ -184,6 +184,7 @@ cat > "${SCRIPT_DIR}/status.md" << EOF
 # Engagement Status
 
 **Target:** ${TARGET_NAME}
+**Program URL:** TODO
 **Platform:** TODO
 **Started:** $(date +%Y-%m-%d)
 **Last Updated:** $(date +%Y-%m-%d)
