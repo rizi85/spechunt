@@ -23,15 +23,15 @@ cd ../target-name        # navigate to the renamed directory
 # 5. Launch Claude Code
 claude
 
-# 6. Run /setup — the agent reads program_description.md and
+# 6. Run /spechunt:setup — the agent reads program_description.md and
 #    auto-populates program/scope.md and program/rules.md with
 #    structured tiers, bounty tables, out-of-scope lists, etc.
 #    Review the output, correct anything, then continue.
 
-# 7. Run /recon to begin passive reconnaissance
+# 7. Run /spechunt:recon to begin passive reconnaissance
 
 # 8. When the agent discovers a vulnerability:
-#    /new-finding <finding-name>
+#    /spechunt:new-finding <finding-name>
 ```
 
 ## Scripts
@@ -55,28 +55,30 @@ After running `./init.sh`, the directory looks like this:
 ├── new_finding.sh                         # Finding scaffolding script
 ├── update_finding.sh                      # Finding status updater
 ├── .claude/commands/                      # Agent slash commands (skills)
-│   ├── help.md                            # /help
-│   ├── setup.md                           # /setup
-│   ├── recon.md                           # /recon
-│   ├── triage.md                          # /triage
-│   ├── new-finding.md                     # /new-finding <name>
-│   ├── submit.md                          # /submit <name>
-│   ├── update-finding.md                  # /update-finding <name> <status>
-│   ├── scope-check.md                     # /scope-check <url>
-│   ├── status.md                          # /status
-│   └── close.md                           # /close
+│   └── spechunt/
+│       ├── help.md                        # /spechunt:help
+│       ├── setup.md                       # /spechunt:setup
+│       ├── recon.md                       # /spechunt:recon
+│       ├── triage.md                      # /spechunt:triage
+│       ├── new-finding.md                 # /spechunt:new-finding <name>
+│       ├── submit.md                      # /spechunt:submit <name>
+│       ├── update-finding.md              # /spechunt:update-finding <name> <status>
+│       ├── scope-check.md                 # /spechunt:scope-check <url>
+│       ├── status.md                      # /spechunt:status
+│       └── close.md                       # /spechunt:close
 ├── .gitignore                             # Protects secrets and sensitive files
 ├── .templates/                            # File templates (used by scripts)
 ├── CLAUDE.md                              # Agent instructions for this engagement
 ├── status.md                              # Dashboard — all findings at a glance
+├── activity.log                           # Append-only audit trail (never read by agent on startup)
 ├── program/                               # [mandatory] Raw program info + structured scope
 │   ├── program_description.md             # Full program description (copy-paste)
-│   ├── rules.md                           # Rules of engagement (structured by /setup)
-│   └── scope.md                           # Tiers, bounty table, out-of-scope (structured by /setup)
+│   ├── rules.md                           # Rules of engagement (structured by /spechunt:setup)
+│   └── scope.md                           # Tiers, bounty table, out-of-scope (structured by /spechunt:setup)
 ├── recon/                                 # [mandatory] Agent-discovered target data
 │   ├── recon_notes.md                     # Raw recon findings (9 structured sections)
 │   ├── triage.md                          # Prioritized findings queue
-│   └── triage-report.md                   # OSINT-enriched triage (populated by /triage)
+│   └── triage-report.md                   # OSINT-enriched triage (populated by /spechunt:triage)
 └── findings/                              # [mandatory] One folder per finding
     └── {finding-name}/
         ├── finding.md                     # [mandatory] YAML metadata + state + key files
@@ -90,20 +92,20 @@ After running `./init.sh`, the directory looks like this:
 
 ## Agent Skills
 
-Spec Hunt includes ten slash commands that agents invoke during a session. These live in `.claude/commands/` and are available automatically when Claude Code is launched in this directory.
+Spec Hunt includes ten slash commands that agents invoke during a session. These live in `.claude/commands/spechunt/` and are available automatically when Claude Code is launched in this directory.
 
 | Skill | Usage | What it does |
 |-------|-------|--------------|
-| `/help` | `/help` | Lists all available skills with usage and descriptions |
-| `/setup` | `/setup` | Reads `program/program_description.md` and auto-populates `program/scope.md` (tiers, bounty table, out-of-scope list, rate limits) and structures `program/rules.md`. Run once after pasting the program description. |
-| `/recon` | `/recon` | Structured passive recon — fingerprints assets, maps API surface, documents auth flows, populates recon_notes.md and triage.md. Pre-flight scope check aborts early if scope.md is not yet populated. |
-| `/triage` | `/triage` | OSINT-enriches each item in triage.md (CVEs, public exploits, complexity), writes triage-report.md, re-orders the priority queue |
-| `/new-finding` | `/new-finding <finding-name>` | Runs `new_finding.sh`, then auto-fills finding.md (title, severity, CWE, summary, attack chain, impact) and updates recon/triage.md |
-| `/submit` | `/submit <finding-name>` | Reads finding.md + evidences/ + poc/ and drafts a complete platform submission report at `writeup/submission.md`. Detects the platform from CLAUDE.md and applies platform-specific formatting (HackerOne, Bugcrowd, Intigriti, YesWeHack). |
-| `/update-finding` | `/update-finding <finding-name> <status>` | Runs `update_finding.sh`, verifies finding.md YAML and status.md counters were updated, handles submission date and bounty recording. Includes a full dispute workflow for rejected findings. |
-| `/scope-check` | `/scope-check <url-or-domain>` | Reads scope.md and rules.md, evaluates the target against exact matches, wildcards, and path exclusions — responds IN SCOPE / OUT OF SCOPE / AMBIGUOUS with the relevant rule quoted |
-| `/status` | `/status` | Reads status.md and active finding.md files — outputs current phase, finding counts, bounty total, top 3 priority queue items, and the recommended next action |
-| `/close` | `/close` | Verifies no active findings, generates `ENGAGEMENT_SUMMARY.md` with results table and key learnings, marks the engagement closed in status.md, and creates a final git commit |
+| `/spechunt:help` | `/spechunt:help` | Lists all available skills with usage and descriptions |
+| `/spechunt:setup` | `/spechunt:setup` | Reads `program/program_description.md` and auto-populates `program/scope.md` (tiers, bounty table, out-of-scope list, rate limits) and structures `program/rules.md`. Run once after pasting the program description. |
+| `/spechunt:recon` | `/spechunt:recon` | Structured passive recon — fingerprints assets, maps API surface, documents auth flows, populates recon_notes.md and triage.md. Pre-flight scope check aborts early if scope.md is not yet populated. |
+| `/spechunt:triage` | `/spechunt:triage` | OSINT-enriches each item in triage.md (CVEs, public exploits, complexity), writes triage-report.md, re-orders the priority queue |
+| `/spechunt:new-finding` | `/spechunt:new-finding <finding-name>` | Runs `new_finding.sh`, then auto-fills finding.md (title, severity, CWE, summary, attack chain, impact) and updates recon/triage.md |
+| `/spechunt:submit` | `/spechunt:submit <finding-name>` | Reads finding.md + evidences/ + poc/ and drafts a complete platform submission report at `writeup/submission.md`. Detects the platform from CLAUDE.md and applies platform-specific formatting (HackerOne, Bugcrowd, Intigriti, YesWeHack). |
+| `/spechunt:update-finding` | `/spechunt:update-finding <finding-name> <status>` | Runs `update_finding.sh`, verifies finding.md YAML and status.md counters were updated, handles submission date and bounty recording. Includes a full dispute workflow for rejected findings. |
+| `/spechunt:scope-check` | `/spechunt:scope-check <url-or-domain>` | Reads scope.md and rules.md, evaluates the target against exact matches, wildcards, and path exclusions — responds IN SCOPE / OUT OF SCOPE / AMBIGUOUS with the relevant rule quoted |
+| `/spechunt:status` | `/spechunt:status` | Reads status.md and active finding.md files — outputs current phase, finding counts, bounty total, top 3 priority queue items, and the recommended next action |
+| `/spechunt:close` | `/spechunt:close` | Verifies no active findings, generates `ENGAGEMENT_SUMMARY.md` with results table and key learnings, marks the engagement closed in status.md, and creates a final git commit |
 
 ## Agent Workflow
 
@@ -122,7 +124,7 @@ Each finding progresses through these statuses, tracked in `finding.md` YAML and
 discovered → exploring → exploited → submitted → accepted / rejected / disputed
 ```
 
-Use `/update-finding <name> <status>` (or `./update_finding.sh` directly) to advance a finding. The script automatically:
+Use `/spechunt:update-finding <name> <status>` (or `./update_finding.sh` directly) to advance a finding. The script automatically:
 - Updates the YAML `status:` field in `finding.md`
 - Updates the finding's row in `status.md`
 - Stamps `submitted:` date when transitioning to `submitted`
@@ -171,7 +173,7 @@ After `init.sh`, only **two fields** need to be filled in manually:
 | **Program URL** | The bounty platform program page (e.g. `https://hackerone.com/target`) |
 | **Platform** | The bounty platform (HackerOne, Bugcrowd, Intigriti, etc.) |
 
-Everything else — scope tiers, bounty tables, out-of-scope lists, rate limits — is extracted automatically by `/setup` from the program description you paste into `program/program_description.md`.
+Everything else — scope tiers, bounty tables, out-of-scope lists, rate limits — is extracted automatically by `/spechunt:setup` from the program description you paste into `program/program_description.md`.
 
 The **Known Constraints** and **Useful Commands** sections are populated incrementally as the agent discovers constraints during recon and testing. They start empty (with commented examples for reference) and grow over the course of the engagement.
 

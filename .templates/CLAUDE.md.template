@@ -14,7 +14,7 @@ Source of truth — always read these files before testing anything:
 - **Full rules:** `program/rules.md`
 - **Structured scope (tiers, bounty table, out-of-scope list):** `program/scope.md`
 
-When in doubt about whether a target is in scope, run `/scope-check <url>`.
+When in doubt about whether a target is in scope, run `/spechunt:scope-check <url>`.
 
 ## Folder Structure
 
@@ -51,16 +51,27 @@ When in doubt about whether a target is in scope, run `/scope-check <url>`.
 
 | Skill | Usage | What it does |
 |-------|-------|--------------|
-| `/help` | `/help` | Lists all available skills with usage and descriptions |
-| `/setup` | `/setup` | Parses program_description.md → populates program/scope.md and program/rules.md |
-| `/recon` | `/recon` | Structured passive recon — fingerprinting, API surface, populates recon_notes.md and triage.md |
-| `/triage` | `/triage` | OSINT-enriched triage — enriches priority queue, writes triage-report.md |
-| `/new-finding` | `/new-finding <finding-name>` | Scaffolds finding folder, fills finding.md, updates triage and status |
-| `/submit` | `/submit <finding-name>` | Drafts complete platform submission report from finding data |
-| `/update-finding` | `/update-finding <finding-name> <status>` | Updates finding status, increments counters, git milestone commit |
-| `/scope-check` | `/scope-check <url-or-domain>` | Verifies in-scope / out-of-scope with tier and bounty range |
-| `/status` | `/status` | Current engagement summary — findings, bounty totals, recommended next action |
-| `/close` | `/close` | Generates final engagement summary report and closes the engagement |
+| `/spechunt:help` | `/spechunt:help` | Lists all available skills with usage and descriptions |
+| `/spechunt:setup` | `/spechunt:setup` | Parses program_description.md → populates program/scope.md and program/rules.md |
+| `/spechunt:recon` | `/spechunt:recon` | Structured passive recon — fingerprinting, API surface, populates recon_notes.md and triage.md |
+| `/spechunt:triage` | `/spechunt:triage` | OSINT-enriched triage — enriches priority queue, writes triage-report.md |
+| `/spechunt:new-finding` | `/spechunt:new-finding <finding-name>` | Scaffolds finding folder, fills finding.md, updates triage and status |
+| `/spechunt:submit` | `/spechunt:submit <finding-name>` | Drafts complete platform submission report from finding data |
+| `/spechunt:update-finding` | `/spechunt:update-finding <finding-name> <status>` | Updates finding status, increments counters, git milestone commit |
+| `/spechunt:scope-check` | `/spechunt:scope-check <url-or-domain>` | Verifies in-scope / out-of-scope with tier and bounty range |
+| `/spechunt:status` | `/spechunt:status` | Current engagement summary — findings, bounty totals, recommended next action |
+| `/spechunt:close` | `/spechunt:close` | Generates final engagement summary report and closes the engagement |
+
+## Activity Log
+
+`activity.log` — append-only engagement audit trail. **Do not read on startup.**
+
+Append significant actions using the Bash tool:
+```bash
+echo "$(date '+%Y-%m-%d %H:%M') [phase]      description" >> activity.log
+```
+Phases: `[setup]` `[recon]` `[triage]` `[scope]` `[submit]` `[close]`
+Scripts auto-log: `[init]` `[finding]` `[update]`
 
 ## Known Constraints
 

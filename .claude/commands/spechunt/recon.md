@@ -4,7 +4,7 @@ Conduct structured reconnaissance on the target. Follow this sequence exactly:
 
 Before doing anything, read `program/scope.md` and verify it has been populated (no TODO values in the In-Scope Assets table). If the file still contains TODO placeholders, stop and instruct the user:
 
-> "`program/scope.md` has not been populated yet. Run `/setup` first to extract scope from the program description, then review it before starting recon."
+> "`program/scope.md` has not been populated yet. Run `/spechunt:setup` first to extract scope from the program description, then review it before starting recon."
 
 Do not proceed until scope.md is populated. Testing without a defined scope risks hitting out-of-scope assets.
 
@@ -40,4 +40,17 @@ For each in-scope asset, collect:
 **6. Update `status.md` phase status**
 - Set Reconnaissance → `Complete` and Triage → `In Progress`
 
-Never test out-of-scope assets. When in doubt about a specific URL, run `/scope-check <url>` first.
+**7. Log to `activity.log`**
+
+Append one line per significant discovery as you work through step 3. Use the Bash tool:
+```bash
+echo "$(date '+%Y-%m-%d %H:%M') [recon]    description — detail" >> activity.log
+```
+Examples of what to log:
+- Subdomain batch: `[recon]    crt.sh: target.com — N subdomains`
+- Tech stack: `[recon]    tech: nginx/1.18, React, Cloudflare WAF`
+- API spec: `[recon]    swagger found: /api/v1/swagger.json`
+- Notable endpoint: `[recon]    endpoint: /api/v1/admin — no auth observed [!]`
+- Auth flow: `[recon]    auth: JWT, POST /auth/login, 15min expiry`
+
+Never test out-of-scope assets. When in doubt about a specific URL, run `/spechunt:scope-check <url>` first.

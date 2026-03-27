@@ -1,6 +1,6 @@
 Check whether a URL, domain, or endpoint is in scope before testing.
 
-Usage: `/scope-check <url-or-domain>`
+Usage: `/spechunt:scope-check <url-or-domain>`
 
 Target to check: `$ARGUMENTS`
 
@@ -27,5 +27,11 @@ Check in this order:
 - Do not test the target
 - Note the ambiguity in `recon/recon_notes.md` under a "Scope Questions" section
 - Recommend: contact the program to clarify before proceeding
+
+**5. Log this check to `activity.log`**
+
+```bash
+echo "$(date '+%Y-%m-%d %H:%M') [scope]    <target> — <IN SCOPE|OUT OF SCOPE|AMBIGUOUS> [tier/reason]" >> activity.log
+```
 
 Always err on the side of caution. Testing out-of-scope assets can result in disqualification and legal risk.

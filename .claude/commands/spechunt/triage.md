@@ -38,4 +38,11 @@ Order findings by: (impact × likelihood) / effort — highest first.
 - Set Triage phase → `Complete`
 - Update Last Updated date
 
+**6. Log to `activity.log`**
+
+Append one line per scored finding:
+```bash
+echo "$(date '+%Y-%m-%d %H:%M') [triage]   <name> scored X.X — #N priority (<auth/no-auth>)" >> activity.log
+```
+
 After this skill completes, the next step is active testing. Start with the top-priority unauthenticated finding in `recon/triage.md`.

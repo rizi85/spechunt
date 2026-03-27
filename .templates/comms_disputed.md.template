@@ -1,0 +1,23 @@
+---
+event: disputed
+date: YYYY-MM-DD
+original_rejection: TODO
+---
+
+## Dispute Opened
+
+**Date:** YYYY-MM-DD
+**Original rejection reason:** TODO
+
+## Why This Finding Is Valid
+
+TODO: Explain why the rejection was incorrect.
+
+## Strengthened Evidence
+
+TODO: List additional evidence gathered to support the dispute.
+
+## Dispute Response Draft
+
+TODO: Draft the response before posting to the platform.
+Save the final version as: `YYYY-MM-DD_NN_dispute-response.md`

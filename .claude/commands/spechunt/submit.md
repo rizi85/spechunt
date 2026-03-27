@@ -1,6 +1,6 @@
 Draft a complete platform submission report for a finding.
 
-Usage: `/submit <finding-name>`
+Usage: `/spechunt:submit <finding-name>`
 
 **1. Read all finding context**
 - Read `findings/$ARGUMENTS/finding.md` — metadata, summary, attack chain, impact
@@ -37,4 +37,10 @@ Usage: `/submit <finding-name>`
 - If `finding.md` status is `exploring`, update it to `exploited`
 - Update Current State in `finding.md`: "Ready for submission — draft at `writeup/submission.md`"
 
-Do not submit to the platform directly — the draft goes in `writeup/submission.md` for human review first. When ready, run `/update-finding $ARGUMENTS submitted`.
+Do not submit to the platform directly — the draft goes in `writeup/submission.md` for human review first. When ready, run `/spechunt:update-finding $ARGUMENTS submitted`.
+
+**6. Log to `activity.log`**
+
+```bash
+echo "$(date '+%Y-%m-%d %H:%M') [submit]   $ARGUMENTS — submission.md drafted (<severity>, $X–$Y)" >> activity.log
+```

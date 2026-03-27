@@ -63,6 +63,25 @@ if [ ! -d "$TEMPLATES_DIR" ]; then
     exit 1
 fi
 
+# --- ASCII Logo -----------------------------------------------------------
+
+cat << 'LOGO'
+
+  ____  ____  _____  ____
+ / ___||  _ \| ____|| ___|
+ \___ \| |_) |  _|  | |
+  ___) |  __/| |___ | |___
+ |____/|_|   |_____| \____|
+  _   _ _   _ _   _ _____
+ | | | || | | || \ | |_   _|
+ | |_| || | | ||  \| | | |
+ | | | || |_| || |\  | | |
+ |_| |_| \___/ |_| \_| |_|
+
+  AI-powered bug bounty framework
+
+LOGO
+
 # --- Create structure -----------------------------------------------------
 
 echo "[*] Initializing engagement: ${TARGET_NAME}"
@@ -104,8 +123,8 @@ Source of truth — always read these files before testing anything:
 - **Full rules:** `program/rules.md`
 - **Structured scope (tiers, bounty table, out-of-scope list):** `program/scope.md`
 
-Run `/setup` after pasting the program description to auto-populate these files.
-When in doubt about whether a target is in scope, run `/scope-check <url>`.
+Run `/spechunt:setup` after pasting the program description to auto-populate these files.
+When in doubt about whether a target is in scope, run `/spechunt:scope-check <url>`.
 
 ## Folder Structure
 
@@ -142,15 +161,26 @@ When in doubt about whether a target is in scope, run `/scope-check <url>`.
 
 | Skill | Usage | What it does |
 |-------|-------|--------------|
-| `/setup` | `/setup` | Parses program_description.md → populates program/scope.md and program/rules.md |
-| `/recon` | `/recon` | Structured passive recon — fingerprinting, API surface, populates recon_notes.md and triage.md |
-| `/triage` | `/triage` | OSINT-enriched triage — enriches priority queue, writes triage-report.md |
-| `/new-finding` | `/new-finding <finding-name>` | Scaffolds finding folder, fills finding.md, updates triage and status |
-| `/submit` | `/submit <finding-name>` | Drafts platform-specific submission report (H1, Bugcrowd, Intigriti, etc.) |
-| `/update-finding` | `/update-finding <finding-name> <status>` | Updates finding status, increments counters, git milestone commit |
-| `/scope-check` | `/scope-check <url-or-domain>` | Verifies in-scope / out-of-scope with tier and bounty range |
-| `/status` | `/status` | Engagement snapshot — finding counts, bounty total, recommended next action |
-| `/close` | `/close` | Closes engagement, generates ENGAGEMENT_SUMMARY.md, final git commit |
+| `/spechunt:setup` | `/spechunt:setup` | Parses program_description.md → populates program/scope.md and program/rules.md |
+| `/spechunt:recon` | `/spechunt:recon` | Structured passive recon — fingerprinting, API surface, populates recon_notes.md and triage.md |
+| `/spechunt:triage` | `/spechunt:triage` | OSINT-enriched triage — enriches priority queue, writes triage-report.md |
+| `/spechunt:new-finding` | `/spechunt:new-finding <finding-name>` | Scaffolds finding folder, fills finding.md, updates triage and status |
+| `/spechunt:submit` | `/spechunt:submit <finding-name>` | Drafts platform-specific submission report (H1, Bugcrowd, Intigriti, etc.) |
+| `/spechunt:update-finding` | `/spechunt:update-finding <finding-name> <status>` | Updates finding status, increments counters, git milestone commit |
+| `/spechunt:scope-check` | `/spechunt:scope-check <url-or-domain>` | Verifies in-scope / out-of-scope with tier and bounty range |
+| `/spechunt:status` | `/spechunt:status` | Engagement snapshot — finding counts, bounty total, recommended next action |
+| `/spechunt:close` | `/spechunt:close` | Closes engagement, generates ENGAGEMENT_SUMMARY.md, final git commit |
+
+## Activity Log
+
+`activity.log` — append-only engagement audit trail. **Do not read on startup.**
+
+Append significant actions using the Bash tool:
+```bash
+echo "$(date '+%Y-%m-%d %H:%M') [phase]      description" >> activity.log
+```
+Phases: `[setup]` `[recon]` `[triage]` `[scope]` `[submit]` `[close]`
+Scripts auto-log: `[init]` `[finding]` `[update]`
 
 ## Known Constraints
 
@@ -232,15 +262,15 @@ Bug bounty program information. This folder is **mandatory** for every engagemen
 | File | Description |
 |------|-------------|
 | `program_description.md` | Full program description from the bounty platform (raw paste) |
-| `rules.md` | Rules of engagement, structured by `/setup` from program description |
+| `rules.md` | Rules of engagement, structured by `/spechunt:setup` from program description |
 | `scope.md` | Structured scope — tiers, bounty table, out-of-scope list, rate limits |
 
 ## Agent Instructions
 
 - Read these files **first** before any testing activity
 - `program_description.md` is the raw source — do not modify it
-- `scope.md` and `rules.md` are populated by `/setup` — review and correct if needed
-- Reference `scope.md` for all scope checks; use `/scope-check <url>` when unsure
+- `scope.md` and `rules.md` are populated by `/spechunt:setup` — review and correct if needed
+- Reference `scope.md` for all scope checks; use `/spechunt:scope-check <url>` when unsure
 EOF
 
 cat > "${SCRIPT_DIR}/program/program_description.md" << EOF
@@ -252,14 +282,14 @@ EOF
 cat > "${SCRIPT_DIR}/program/rules.md" << EOF
 # Rules of Engagement
 
-TODO: Populated by /setup from program_description.md.
+TODO: Populated by /spechunt:setup from program_description.md.
 EOF
 
 cat > "${SCRIPT_DIR}/program/scope.md" << 'EOF'
 # Scope Summary
 
 Structured scope extracted from program description and rules of engagement.
-Populated by `/setup` — run it after pasting program_description.md.
+Populated by `/spechunt:setup` — run it after pasting program_description.md.
 
 ## In-Scope Assets
 
@@ -304,7 +334,7 @@ EOF
 
 echo "    [+] program/program_description.md"
 echo "    [+] program/rules.md"
-echo "    [+] program/scope.md (run /setup to populate)"
+echo "    [+] program/scope.md (run /spechunt:setup to populate)"
 
 # --- Generate recon/ files ------------------------------------------------
 
@@ -317,15 +347,15 @@ Reconnaissance phase outputs. This folder is **mandatory** for every engagement.
 
 | File | Description |
 |------|-------------|
-| `recon_notes.md` | Raw reconnaissance findings (populated by `/recon`) |
+| `recon_notes.md` | Raw reconnaissance findings (populated by `/spechunt:recon`) |
 | `triage.md` | Prioritized findings queue with scores and status |
-| `triage-report.md` | OSINT-enriched triage (populated by `/triage`) |
+| `triage-report.md` | OSINT-enriched triage (populated by `/spechunt:triage`) |
 
 ## Agent Instructions
 
 - `triage.md` defines the testing priority order — work top-down
 - Update finding status in `triage.md` as they are confirmed or ruled out
-- For scope checks, read `program/scope.md` or run `/scope-check <url>`
+- For scope checks, read `program/scope.md` or run `/spechunt:scope-check <url>`
 EOF
 
 cat > "${SCRIPT_DIR}/recon/recon_notes.md" << EOF
@@ -440,7 +470,7 @@ cat > "${SCRIPT_DIR}/recon/triage-report.md" << EOF
 **Target:** ${TARGET_NAME}
 **Date:** $(date +%Y-%m-%d)
 
-> Generated by the \`/triage\` skill. Run \`/triage\` to populate this file with
+> Generated by the \`/spechunt:triage\` skill. Run \`/spechunt:triage\` to populate this file with
 > OSINT-enriched analysis of each item in \`triage.md\`.
 
 ---
@@ -500,6 +530,18 @@ EOF
 
 echo "    [+] findings/README.md"
 
+# --- Create activity.log --------------------------------------------------
+
+LOG_FILE="${SCRIPT_DIR}/activity.log"
+cat > "$LOG_FILE" << EOF
+# Spec Hunt — Activity Log
+# Engagement: ${TARGET_NAME}
+# Started: $(date +%Y-%m-%d)
+# Format: YYYY-MM-DD HH:MM [phase]      description
+EOF
+echo "$(date '+%Y-%m-%d %H:%M') [init]     engagement initialized — ${TARGET_NAME}" >> "$LOG_FILE"
+echo "    [+] activity.log"
+
 # --- Git milestone commit -------------------------------------------------
 
 if git -C "$SCRIPT_DIR" rev-parse --git-dir > /dev/null 2>&1; then
@@ -509,6 +551,7 @@ if git -C "$SCRIPT_DIR" rev-parse --git-dir > /dev/null 2>&1; then
         "${SCRIPT_DIR}/program" \
         "${SCRIPT_DIR}/recon" \
         "${SCRIPT_DIR}/findings" \
+        "${SCRIPT_DIR}/activity.log" \
         2>/dev/null || true
     git -C "$SCRIPT_DIR" commit -m "init(${TARGET_NAME}): engagement workspace initialized" 2>/dev/null && \
         echo "    [+] Git commit: engagement initialized" || true
@@ -551,14 +594,14 @@ fi
 echo "  1. Paste program description into program/program_description.md"
 echo "  2. Update CLAUDE.md: fill in Program URL and Platform (2 fields only)"
 echo "  3. Launch Claude Code: claude"
-echo "  4. Run /setup — agent will extract scope, tiers, and rules automatically"
-echo "  5. Review program/scope.md and program/rules.md, then run /recon"
+echo "  4. Run /spechunt:setup — agent will extract scope, tiers, and rules automatically"
+echo "  5. Review program/scope.md and program/rules.md, then run /spechunt:recon"
 echo ""
 echo "Available skills once inside Claude Code:"
-echo "  /setup              — parse program description → populate scope + rules"
-echo "  /recon              — structured passive reconnaissance"
-echo "  /triage             — OSINT-enriched priority queue"
-echo "  /new-finding <name> — scaffold a new vulnerability finding"
-echo "  /submit <name>      — draft platform submission report"
-echo "  /update-finding     — update finding status and counters"
-echo "  /scope-check <url>  — verify in-scope / out-of-scope"
+echo "  /spechunt:setup              — parse program description → populate scope + rules"
+echo "  /spechunt:recon              — structured passive reconnaissance"
+echo "  /spechunt:triage             — OSINT-enriched priority queue"
+echo "  /spechunt:new-finding <name> — scaffold a new vulnerability finding"
+echo "  /spechunt:submit <name>      — draft platform submission report"
+echo "  /spechunt:update-finding     — update finding status and counters"
+echo "  /spechunt:scope-check <url>  — verify in-scope / out-of-scope"

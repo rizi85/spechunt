@@ -210,7 +210,7 @@ Analysis documents, vulnerability reports, and platform submissions.
 
 ## Agent Instructions
 
-- `submission.md` is the canonical report — use `/submit <finding-name>` to auto-fill it
+- `submission.md` is the canonical report — use `/spechunt:submit <finding-name>` to auto-fill it
 - Reference evidence files by relative path: `../evidences/YYYY-MM-DD_NN_description.png`
 - Steps to Reproduce must be literal and copy-paste ready
 - Do not submit to the platform directly — human review first
@@ -345,12 +345,20 @@ if [ -f "$STATUS_FILE" ]; then
     echo "    [+] Updated status.md"
 fi
 
+# --- Append to activity.log -----------------------------------------------
+
+LOG_FILE="${SCRIPT_DIR}/activity.log"
+if [ -f "$LOG_FILE" ]; then
+    echo "$(date '+%Y-%m-%d %H:%M') [finding]  created: ${FINDING_NAME} (discovered)" >> "$LOG_FILE"
+fi
+
 # --- Git milestone commit -------------------------------------------------
 
 if git -C "$SCRIPT_DIR" rev-parse --git-dir > /dev/null 2>&1; then
     git -C "$SCRIPT_DIR" add "${FINDING_DIR}" 2>/dev/null || true
     [ -f "${FINDINGS_README}" ] && git -C "$SCRIPT_DIR" add "${FINDINGS_README}" 2>/dev/null || true
     [ -f "${STATUS_FILE}" ] && git -C "$SCRIPT_DIR" add "${STATUS_FILE}" 2>/dev/null || true
+    [ -f "$LOG_FILE" ] && git -C "$SCRIPT_DIR" add "$LOG_FILE" 2>/dev/null || true
     git -C "$SCRIPT_DIR" commit -m "finding(${FINDING_NAME}): discovered" 2>/dev/null && \
         echo "    [+] Git commit: finding(${FINDING_NAME}): discovered" || true
 fi
@@ -364,5 +372,5 @@ echo "Next steps:"
 echo "  1. Edit findings/${FINDING_NAME}/finding.md — fill in title, severity, CWE, summary"
 echo "  2. Add PoC code to findings/${FINDING_NAME}/poc/"
 echo "  3. Take screenshots → findings/${FINDING_NAME}/evidences/"
-echo "  4. Run /submit ${FINDING_NAME} to draft the platform submission"
-echo "  5. Run /update-finding ${FINDING_NAME} <status> as the finding progresses"
+echo "  4. Run /spechunt:submit ${FINDING_NAME} to draft the platform submission"
+echo "  5. Run /spechunt:update-finding ${FINDING_NAME} <status> as the finding progresses"

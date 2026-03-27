@@ -170,6 +170,128 @@ if [ -f "$STATUS_FILE" ]; then
     fi
 fi
 
+# --- Generate comms file --------------------------------------------------
+
+COMMS_DIR="${FINDING_DIR}/comms"
+COMMS_FILE=""
+
+case "$NEW_STATUS" in
+    submitted|accepted|rejected|disputed)
+        if [ -d "$COMMS_DIR" ]; then
+            EXISTING=$(find "$COMMS_DIR" -maxdepth 1 -name "[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]_*.md" 2>/dev/null | wc -l | tr -d ' ')
+            NN=$(printf "%02d" $((EXISTING + 1)))
+            COMMS_FILE="${COMMS_DIR}/${TODAY}_${NN}_${NEW_STATUS}.md"
+
+            case "$NEW_STATUS" in
+                submitted)
+                    cat > "$COMMS_FILE" << EOF
+---
+event: submitted
+date: ${TODAY}
+platform_id: TODO
+---
+
+## Submission
+
+**Submitted:** ${TODAY}
+**Platform report ID / URL:** TODO
+
+## Notes
+
+TODO: Record the platform report ID or URL once available.
+EOF
+                    ;;
+                accepted)
+                    BOUNTY_DISPLAY="${BOUNTY_AMOUNT:-TODO}"
+                    cat > "$COMMS_FILE" << EOF
+---
+event: accepted
+date: ${TODAY}
+bounty: ${BOUNTY_DISPLAY}
+---
+
+## Acceptance
+
+**Accepted:** ${TODAY}
+**Bounty:** \$${BOUNTY_DISPLAY}
+
+## Platform Message
+
+> TODO: Paste the platform's acceptance message verbatim.
+
+## Notes
+
+TODO
+EOF
+                    ;;
+                rejected)
+                    cat > "$COMMS_FILE" << EOF
+---
+event: rejected
+date: ${TODAY}
+reason: TODO
+---
+
+## Rejection
+
+**Rejected:** ${TODAY}
+**Reason:** TODO
+
+## Platform Message
+
+> TODO: Paste the platform's rejection message verbatim.
+
+## Analysis
+
+- **Scope issue?** TODO
+- **Duplicate?** TODO
+- **Insufficient impact?** TODO
+- **Disputable?** TODO — if yes, run \`/spechunt:update-finding ${FINDING_NAME} disputed\`
+EOF
+                    ;;
+                disputed)
+                    cat > "$COMMS_FILE" << EOF
+---
+event: disputed
+date: ${TODAY}
+original_rejection: TODO
+---
+
+## Dispute Opened
+
+**Date:** ${TODAY}
+**Original rejection reason:** TODO
+
+## Why This Finding Is Valid
+
+TODO: Explain why the rejection was incorrect.
+
+## Strengthened Evidence
+
+TODO: List additional evidence gathered to support the dispute.
+
+## Dispute Response Draft
+
+TODO: Draft the response before posting to the platform.
+Save the final version as: \`comms/YYYY-MM-DD_NN_dispute-response.md\`
+EOF
+                    ;;
+            esac
+
+            echo "    [+] Created comms/$(basename "$COMMS_FILE")"
+        fi
+        ;;
+esac
+
+# --- Append to activity.log -----------------------------------------------
+
+LOG_FILE="${SCRIPT_DIR}/activity.log"
+if [ -f "$LOG_FILE" ]; then
+    BOUNTY_SUFFIX=""
+    [ -n "$BOUNTY_AMOUNT" ] && BOUNTY_SUFFIX=" (\$${BOUNTY_AMOUNT})"
+    echo "$(date '+%Y-%m-%d %H:%M') [update]   ${FINDING_NAME}: ${OLD_STATUS} → ${NEW_STATUS}${BOUNTY_SUFFIX}" >> "$LOG_FILE"
+fi
+
 # --- Git milestone commit -------------------------------------------------
 
 if git -C "$SCRIPT_DIR" rev-parse --git-dir > /dev/null 2>&1; then
@@ -177,6 +299,8 @@ if git -C "$SCRIPT_DIR" rev-parse --git-dir > /dev/null 2>&1; then
         submitted|accepted|rejected|disputed)
             git -C "$SCRIPT_DIR" add "$FINDING_MD" 2>/dev/null || true
             [ -f "$STATUS_FILE" ] && git -C "$SCRIPT_DIR" add "$STATUS_FILE" 2>/dev/null || true
+            [ -n "$COMMS_FILE" ] && [ -f "$COMMS_FILE" ] && git -C "$SCRIPT_DIR" add "$COMMS_FILE" 2>/dev/null || true
+            [ -f "$LOG_FILE" ] && git -C "$SCRIPT_DIR" add "$LOG_FILE" 2>/dev/null || true
             COMMIT_MSG="finding(${FINDING_NAME}): status → ${NEW_STATUS}"
             if [ -n "$BOUNTY_AMOUNT" ]; then
                 COMMIT_MSG="${COMMIT_MSG} (\$${BOUNTY_AMOUNT})"

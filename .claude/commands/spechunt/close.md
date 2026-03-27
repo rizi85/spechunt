@@ -53,10 +53,11 @@ Key assets and patterns documented: `recon/recon_notes.md`
 - Add a new Phase Status row: `Closed | [today's date]`
 - Update `Last Updated` date
 
-**4. Git milestone commit**
+**4. Log and git milestone commit**
 
 ```bash
-git add ENGAGEMENT_SUMMARY.md status.md
+echo "$(date '+%Y-%m-%d %H:%M') [close]    engagement closed — $[bounty] earned, [N]/[total] accepted" >> activity.log
+git add ENGAGEMENT_SUMMARY.md status.md activity.log
 git commit -m "close([target-slug]): engagement closed — $[bounty] earned, [N] findings accepted"
 ```
 

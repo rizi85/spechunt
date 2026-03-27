@@ -1,0 +1,21 @@
+---
+event: rejected
+date: YYYY-MM-DD
+reason: TODO
+---
+
+## Rejection
+
+**Rejected:** YYYY-MM-DD
+**Reason:** TODO
+
+## Platform Message
+
+> TODO: Paste the platform's rejection message verbatim.
+
+## Analysis
+
+- **Scope issue?** TODO
+- **Duplicate?** TODO
+- **Insufficient impact?** TODO
+- **Disputable?** TODO — if yes, run `/spechunt:update-finding <name> disputed`

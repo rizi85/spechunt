@@ -23,8 +23,8 @@ Bounty:    $[earned] earned
 
 ## Recommended Next Action
 [One specific action — e.g., "Investigate [triage item] — highest score, no auth required"
- or "Advance [finding] from exploited → submit via /submit <name>"
- or "All triage items tested — run /triage to enrich and reprioritize"]
+ or "Advance [finding] from exploited → submit via /spechunt:submit <name>"
+ or "All triage items tested — run /spechunt:triage to enrich and reprioritize"]
 
 ## Blockers
 [From status.md Blockers section, or "None"]
@@ -32,5 +32,5 @@ Bounty:    $[earned] earned
 
 **3. Keep it actionable**
 - If there are unstarted high-priority triage items, recommend starting the top one
-- If a finding is `exploited` but not `submitted`, recommend running `/submit <name>`
-- If all findings are in terminal states and triage is empty, recommend running `/recon` again or `/triage` to re-enrich
+- If a finding is `exploited` but not `submitted`, recommend running `/spechunt:submit <name>`
+- If all findings are in terminal states and triage is empty, recommend running `/spechunt:recon` again or `/spechunt:triage` to re-enrich

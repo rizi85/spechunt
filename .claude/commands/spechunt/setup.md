@@ -41,6 +41,12 @@ After populating the files, summarise what was found:
 
 **6. Ask the user to review**
 
-Prompt: "Please review `program/scope.md` and `program/rules.md` — correct anything that was misread or missing, then run `/recon` to begin reconnaissance."
+Prompt: "Please review `program/scope.md` and `program/rules.md` — correct anything that was misread or missing, then run `/spechunt:recon` to begin reconnaissance."
 
-Do not run `/recon` automatically. The user should verify the extracted scope before any testing begins.
+Do not run `/spechunt:recon` automatically. The user should verify the extracted scope before any testing begins.
+
+**7. Log to `activity.log`**
+
+```bash
+echo "$(date '+%Y-%m-%d %H:%M') [setup]    scope extracted: N assets, $X–$Y bounty, N OOS items" >> activity.log
+```
